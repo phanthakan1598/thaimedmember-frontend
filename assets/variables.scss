@@ -1,0 +1,54 @@
+// Ref: https://github.com/nuxt-community/vuetify-module#customvariables
+//
+// The variables you want to modify
+// $font-size-root: 20px;
+
+.login-side-image {
+  background: #F1EFEF;
+
+  display: grid;
+  justify-items: center;
+  align-items: center;
+
+  .login-side-logo {
+    position: absolute;
+    width: 120px;
+    height: 58px;
+    left: 40px;
+    top: 40px;
+  }
+
+}
+
+.login-side-form {
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
+
+  .login-card-v1 {
+    border: none;
+  }
+}
+
+.login-side-form,
+.login-side-image {
+  // height: 100vh;
+  min-height: calc(var(--vh, 1vh) * 100);
+
+}
+
+
+@media only screen and (max-width: 960px) {
+  .login-side-image {
+    display: none;
+  }
+}
+
+.v-text-field input{
+  line-height: 32px !important;
+}
+
+.v-input .v-lable{
+  line-height: 32px !important;
+}
