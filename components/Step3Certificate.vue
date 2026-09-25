@@ -66,80 +66,6 @@
 
         <v-row>
           <v-col cols="12">
-            <span style="font-size: 24px; font-weight: bold;">
-              ข้าพเจ้าได้แนบหลักฐานประกอบการพิจารณาดังต่อไปนี้
-              <span class="red--text">*</span>
-            </span>
-          </v-col>
-        </v-row>
-
-        <v-row>
-          <v-col
-            cols="12"
-            class="py-1"
-          >
-            <v-card outlined class="pa-4 mb-3">
-              <v-col
-                v-for="(item, index) in evidenceList"
-                :key="'evidence-' + index"
-                cols="12"
-                class="py-1"
-              >
-                <validation-provider
-                  v-slot="{ errors }"
-                  :name="item.label"
-                  :rules="item.required ? 'mustBeTrue' : ''"
-                >
-                  <v-checkbox
-                    v-model="localForm.evidences[item.value].status"
-                    dense
-                    hide-details
-                    :error-messages="errors"
-                    class="py-0"
-                    @change="onAttachmentStatusChange(item.value, $event)"
-                  >
-                    <template #label>
-                      <span>
-                        {{ item.label }}
-                        <span v-if="item.required" class="red--text">*</span>
-                      </span>
-                    </template>
-                  </v-checkbox>
-                </validation-provider>
-
-                <v-row v-if="localForm.evidences[item.value].status" class="pl-8 pr-2 pt-2">
-                  <v-col cols="12">
-                    <validation-provider
-                      v-slot="{ errors }"
-                      :name="item.value"
-                      :rules="item.required ? 'required' : ''"
-                    >
-                      <v-file-input
-                        v-model="localForm.evidences[item.value].file"
-                        placeholder="แนบไฟล์เอกสาร"
-                        :accept="acceptAttr(item.accept)"
-                        prepend-icon=""
-                        prepend-inner-icon="mdi-paperclip"
-                        outlined
-                        dense
-                        show-size
-                        :error-messages="errors"
-                        :hint="'รองรับไฟล์ ' + item.accept"
-                        persistent-hint
-                        @change="onFileChange(item.value, $event, item.accept)"
-                      />
-                    </validation-provider>
-                  </v-col>
-                </v-row>
-              </v-col>
-            </v-card>
-          </v-col>
-        </v-row>
-
-        <v-divider class="my-6" />
-
-        <v-row>
-          <v-col cols="12">
             <div class="font-weight-bold mb-2">
               วิธีการรับหนังสือสำคัญการเป็นสมาชิกสภาการแพทย์แผนไทยและใบอนุญาต
               <span class="red--text">*</span>
@@ -159,7 +85,7 @@
                   value="postal"
                 />
                 <v-radio
-                  label="รับด้วยตนเองที่สภาการแพทย์แผนไทย"
+                  label="รับด้วยตนเองที่สภาการแพทย์แผนไทย (รอทางสภาฯประกาศแจ้ง)"
                   value="self_pickup"
                 />
               </v-radio-group>

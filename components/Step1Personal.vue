@@ -293,18 +293,6 @@
               />
             </validation-provider>
           </v-col>
-          <v-col cols="12" md="3" class="py-0">
-            เบอร์โทรฉุกเฉิน<small class="ml-1" style="color: red">*</small>
-            <validation-provider v-slot="{ errors }" rules="numeric|digits:10|noSpace">
-              <v-text-field
-                v-model="localForm.emergencyPhone"
-                placeholder="กรุณาระบุเบอร์โทรฉุกเฉิน"
-                outlined
-                dense
-                :error-messages="errors"
-              />
-            </validation-provider>
-          </v-col>
 
           <v-col cols="12" md="3" class="py-0">
             สัญชาติ<small class="ml-1" style="color: red">*</small>
@@ -457,13 +445,15 @@
           <v-col cols="12" md="4" class="py-0">
             จังหวัด<small class="ml-1" style="color: red">*</small>
             <validation-provider v-slot="{ errors }" rules="required">
-              <v-select
+              <v-autocomplete
                 v-model="localForm.province"
-                :items="provinceList"
+                :items="provinceOptions"
+                :loading="isLoadingGeo"
                 placeholder="กรุณาระบุจังหวัด"
                 outlined
                 dense
                 :error-messages="errors"
+                @change="onProvinceChange"
               />
             </validation-provider>
           </v-col>
@@ -471,12 +461,15 @@
           <v-col cols="12" md="4" class="py-0">
             เขต / อำเภอ<small class="ml-1" style="color: red">*</small>
             <validation-provider v-slot="{ errors }" rules="required">
-              <v-text-field
+              <v-autocomplete
                 v-model="localForm.district"
+                :items="districtOptions"
+                :disabled="!localForm.province"
                 placeholder="กรุณาระบุเขต / อำเภอ"
                 outlined
                 dense
                 :error-messages="errors"
+                @change="onDistrictChange"
               />
             </validation-provider>
           </v-col>
@@ -484,12 +477,15 @@
           <v-col cols="12" md="4" class="py-0">
             แขวง / ตำบล<small class="ml-1" style="color: red">*</small>
             <validation-provider v-slot="{ errors }" rules="required">
-              <v-text-field
+              <v-autocomplete
                 v-model="localForm.subdistrict"
+                :items="subdistrictOptions"
+                :disabled="!localForm.district"
                 placeholder="กรุณาระบุแขวง / ตำบล"
                 outlined
                 dense
                 :error-messages="errors"
+                @change="onSubdistrictChange"
               />
             </validation-provider>
           </v-col>
@@ -497,8 +493,10 @@
           <v-col cols="12" md="4" class="py-0">
             รหัสไปรษณีย์<small class="ml-1" style="color: red">*</small>
             <validation-provider v-slot="{ errors }" rules="required">
-              <v-text-field
+              <v-autocomplete
                 v-model="localForm.zipcode"
+                :items="zipcodeOptions"
+                :disabled="!localForm.district"
                 placeholder="กรุณาระบุรหัสไปรษณีย์"
                 outlined
                 dense
@@ -599,14 +597,16 @@
           <v-col cols="12" md="4" class="py-0">
             จังหวัด<small class="ml-1" style="color: red">*</small>
             <validation-provider v-slot="{ errors }" rules="required">
-              <v-select
+              <v-autocomplete
                 v-model="localForm.provinceContact"
-                :items="provinceList"
+                :items="provinceOptions"
+                :loading="isLoadingGeo"
                 placeholder="กรุณาระบุจังหวัด"
                 outlined
                 :disabled="localForm.checkboxAddressContact"
                 dense
                 :error-messages="errors"
+                @change="onProvinceContactChange"
               />
             </validation-provider>
           </v-col>
@@ -614,13 +614,15 @@
           <v-col cols="12" md="4" class="py-0">
             เขต / อำเภอ<small class="ml-1" style="color: red">*</small>
             <validation-provider v-slot="{ errors }" rules="required">
-              <v-text-field
+              <v-autocomplete
                 v-model="localForm.districtContact"
+                :items="districtContactOptions"
                 placeholder="กรุณาระบุเขต / อำเภอ"
                 outlined
-                :disabled="localForm.checkboxAddressContact"
+                :disabled="localForm.checkboxAddressContact || !localForm.provinceContact"
                 dense
                 :error-messages="errors"
+                @change="onDistrictContactChange"
               />
             </validation-provider>
           </v-col>
@@ -628,13 +630,15 @@
           <v-col cols="12" md="4" class="py-0">
             แขวง / ตำบล<small class="ml-1" style="color: red">*</small>
             <validation-provider v-slot="{ errors }" rules="required">
-              <v-text-field
+              <v-autocomplete
                 v-model="localForm.subdistrictContact"
+                :items="subdistrictContactOptions"
                 placeholder="กรุณาระบุแขวง / ตำบล"
                 outlined
-                :disabled="localForm.checkboxAddressContact"
+                :disabled="localForm.checkboxAddressContact || !localForm.districtContact"
                 dense
                 :error-messages="errors"
+                @change="onSubdistrictContactChange"
               />
             </validation-provider>
           </v-col>
@@ -642,11 +646,12 @@
           <v-col cols="12" md="4" class="py-0">
             รหัสไปรษณีย์<small class="ml-1" style="color: red">*</small>
             <validation-provider v-slot="{ errors }" rules="required">
-              <v-text-field
+              <v-autocomplete
                 v-model="localForm.zipcodeContact"
+                :items="zipcodeContactOptions"
                 placeholder="กรุณาระบุรหัสไปรษณีย์"
                 outlined
-                :disabled="localForm.checkboxAddressContact"
+                :disabled="localForm.checkboxAddressContact || !localForm.districtContact"
                 dense
                 :error-messages="errors"
               />
@@ -744,14 +749,16 @@
           <v-col cols="12" md="4" class="py-0">
             จังหวัด<small class="ml-1" style="color: red">*</small>
             <validation-provider v-slot="{ errors }" rules="required">
-              <v-select
+              <v-autocomplete
                 v-model="localForm.provinceDocument"
-                :items="provinceList"
+                :items="provinceOptions"
+                :loading="isLoadingGeo"
                 placeholder="กรุณาระบุจังหวัด"
                 outlined
                 :disabled="localForm.checkboxAddressDocument"
                 dense
                 :error-messages="errors"
+                @change="onProvinceDocumentChange"
               />
             </validation-provider>
           </v-col>
@@ -759,13 +766,15 @@
           <v-col cols="12" md="4" class="py-0">
             เขต / อำเภอ<small class="ml-1" style="color: red">*</small>
             <validation-provider v-slot="{ errors }" rules="required">
-              <v-text-field
+              <v-autocomplete
                 v-model="localForm.districtDocument"
+                :items="districtDocumentOptions"
                 placeholder="กรุณาระบุเขต / อำเภอ"
                 outlined
-                :disabled="localForm.checkboxAddressDocument"
+                :disabled="localForm.checkboxAddressDocument || !localForm.provinceDocument"
                 dense
                 :error-messages="errors"
+                @change="onDistrictDocumentChange"
               />
             </validation-provider>
           </v-col>
@@ -773,13 +782,15 @@
           <v-col cols="12" md="4" class="py-0">
             แขวง / ตำบล<small class="ml-1" style="color: red">*</small>
             <validation-provider v-slot="{ errors }" rules="required">
-              <v-text-field
+              <v-autocomplete
                 v-model="localForm.subdistrictDocument"
+                :items="subdistrictDocumentOptions"
                 placeholder="กรุณาระบุแขวง / ตำบล"
                 outlined
-                :disabled="localForm.checkboxAddressDocument"
+                :disabled="localForm.checkboxAddressDocument || !localForm.districtDocument"
                 dense
                 :error-messages="errors"
+                @change="onSubdistrictDocumentChange"
               />
             </validation-provider>
           </v-col>
@@ -787,11 +798,12 @@
           <v-col cols="12" md="4" class="py-0">
             รหัสไปรษณีย์<small class="ml-1" style="color: red">*</small>
             <validation-provider v-slot="{ errors }" rules="required">
-              <v-text-field
+              <v-autocomplete
                 v-model="localForm.zipcodeDocument"
+                :items="zipcodeDocumentOptions"
                 placeholder="กรุณาระบุรหัสไปรษณีย์"
                 outlined
-                :disabled="localForm.checkboxAddressDocument"
+                :disabled="localForm.checkboxAddressDocument || !localForm.districtDocument"
                 dense
                 :error-messages="errors"
               />
@@ -855,6 +867,88 @@
 </template>
 
 <script>
+let cachedGeoData = null
+
+const PROV_CODE_MAP = {
+  กรุงเทพมหานคร: 10,
+  สมุทรปราการ: 11,
+  นนทบุรี: 12,
+  ปทุมธานี: 13,
+  พระนครศรีอยุธยา: 14,
+  อ่างทอง: 15,
+  ลพบุรี: 16,
+  สิงห์บุรี: 17,
+  ชัยนาท: 18,
+  สระบุรี: 19,
+  ชลบุรี: 20,
+  ระยอง: 21,
+  จันทบุรี: 22,
+  ตราด: 23,
+  ฉะเชิงเทรา: 24,
+  ปราจีนบุรี: 25,
+  นครนายก: 26,
+  สระแก้ว: 27,
+  นครราชสีมา: 30,
+  บุรีรัมย์: 31,
+  สุรินทร์: 32,
+  ศรีสะเกษ: 33,
+  อุบลราชธานี: 34,
+  ยโสธร: 35,
+  ชัยภูมิ: 36,
+  อำนาจเจริญ: 37,
+  บึงกาฬ: 38,
+  หนองบัวลำภู: 39,
+  ขอนแก่น: 40,
+  อุดรธานี: 41,
+  เลย: 42,
+  หนองคาย: 43,
+  มหาสารคาม: 44,
+  ร้อยเอ็ด: 45,
+  กาฬสินธุ์: 46,
+  สกลนคร: 47,
+  นครพนม: 48,
+  มุกดาหาร: 49,
+  เชียงใหม่: 50,
+  ลำพูน: 51,
+  ลำปาง: 52,
+  อุตรดิตถ์: 53,
+  แพร่: 54,
+  น่าน: 55,
+  พะเยา: 56,
+  เชียงราย: 57,
+  แม่ฮ่องสอน: 58,
+  นครสวรรค์: 60,
+  อุทัยธานี: 61,
+  กำแพงเพชร: 62,
+  ตาก: 63,
+  สุโขทัย: 64,
+  พิษณุโลก: 65,
+  พิจิตร: 66,
+  เพชรบูรณ์: 67,
+  ราชบุรี: 70,
+  กาญจนบุรี: 71,
+  สุพรรณบุรี: 72,
+  นครปฐม: 73,
+  สมุทรสาคร: 74,
+  สมุทรสงคราม: 75,
+  เพชรบุรี: 76,
+  ประจวบคีรีขันธ์: 77,
+  นครศรีธรรมราช: 80,
+  กระบี่: 81,
+  พังงา: 82,
+  ภูเก็ต: 83,
+  สุราษฎร์ธานี: 84,
+  ระนอง: 85,
+  ชุมพร: 86,
+  สงขลา: 90,
+  สตูล: 91,
+  ตรัง: 92,
+  พัทลุง: 93,
+  ปัตตานี: 94,
+  ยะลา: 95,
+  นราธิวาส: 96
+}
+
 export default {
   name: 'Step1PersonalComponent',
 
@@ -870,6 +964,11 @@ export default {
       birthMenu: false,
 
       profileImage: null,
+
+      geoProvinces: cachedGeoData ? cachedGeoData.provinces : [],
+      geoDistricts: cachedGeoData ? cachedGeoData.districts : [],
+      geoSubdistricts: cachedGeoData ? cachedGeoData.subdistricts : [],
+      isLoadingGeo: false,
 
       prefixListTh: [
         'นาย',
@@ -986,7 +1085,6 @@ export default {
         mobile: '',
         email: '',
         idLine: '',
-        emergencyPhone: '',
         nationality: '',
         ethnicity: '',
         religion: '',
@@ -1058,6 +1156,126 @@ export default {
       const mm = month.padStart(2, '0')
 
       return `${dd}-${mm}-${buddhistYear}`
+    },
+    provinceOptions () {
+      if (this.geoProvinces && this.geoProvinces.length > 0) {
+        return this.geoProvinces.map(p => p.nameTh)
+      }
+      return this.provinceList
+    },
+    districtOptions () {
+      const provCode = this.getProvCode(this.localForm.province)
+      if (!provCode) {
+        return this.localForm.district ? [this.localForm.district] : []
+      }
+      const list = this.geoDistricts
+        .filter(d => Math.floor(d.id / 100) === provCode)
+        .map(d => d.nameTh)
+      if (this.localForm.district && !list.includes(this.localForm.district)) {
+        return [this.localForm.district, ...list]
+      }
+      return list
+    },
+    subdistrictOptions () {
+      const provCode = this.getProvCode(this.localForm.province)
+      if (!provCode) {
+        return this.localForm.subdistrict ? [this.localForm.subdistrict] : []
+      }
+      const dist = this.findDistrict(provCode, this.localForm.district)
+      if (!dist) {
+        return this.localForm.subdistrict ? [this.localForm.subdistrict] : []
+      }
+      const list = this.geoSubdistricts
+        .filter(s => Math.floor(s.id / 100) === dist.id)
+        .map(s => s.nameTh)
+      if (this.localForm.subdistrict && !list.includes(this.localForm.subdistrict)) {
+        return [this.localForm.subdistrict, ...list]
+      }
+      return list
+    },
+    zipcodeOptions () {
+      return this.getZipcodeOptions(
+        this.localForm.province,
+        this.localForm.district,
+        this.localForm.subdistrict,
+        this.localForm.zipcode
+      )
+    },
+    districtContactOptions () {
+      const provCode = this.getProvCode(this.localForm.provinceContact)
+      if (!provCode) {
+        return this.localForm.districtContact ? [this.localForm.districtContact] : []
+      }
+      const list = this.geoDistricts
+        .filter(d => Math.floor(d.id / 100) === provCode)
+        .map(d => d.nameTh)
+      if (this.localForm.districtContact && !list.includes(this.localForm.districtContact)) {
+        return [this.localForm.districtContact, ...list]
+      }
+      return list
+    },
+    subdistrictContactOptions () {
+      const provCode = this.getProvCode(this.localForm.provinceContact)
+      if (!provCode) {
+        return this.localForm.subdistrictContact ? [this.localForm.subdistrictContact] : []
+      }
+      const dist = this.findDistrict(provCode, this.localForm.districtContact)
+      if (!dist) {
+        return this.localForm.subdistrictContact ? [this.localForm.subdistrictContact] : []
+      }
+      const list = this.geoSubdistricts
+        .filter(s => Math.floor(s.id / 100) === dist.id)
+        .map(s => s.nameTh)
+      if (this.localForm.subdistrictContact && !list.includes(this.localForm.subdistrictContact)) {
+        return [this.localForm.subdistrictContact, ...list]
+      }
+      return list
+    },
+    zipcodeContactOptions () {
+      return this.getZipcodeOptions(
+        this.localForm.provinceContact,
+        this.localForm.districtContact,
+        this.localForm.subdistrictContact,
+        this.localForm.zipcodeContact
+      )
+    },
+    districtDocumentOptions () {
+      const provCode = this.getProvCode(this.localForm.provinceDocument)
+      if (!provCode) {
+        return this.localForm.districtDocument ? [this.localForm.districtDocument] : []
+      }
+      const list = this.geoDistricts
+        .filter(d => Math.floor(d.id / 100) === provCode)
+        .map(d => d.nameTh)
+      if (this.localForm.districtDocument && !list.includes(this.localForm.districtDocument)) {
+        return [this.localForm.districtDocument, ...list]
+      }
+      return list
+    },
+    subdistrictDocumentOptions () {
+      const provCode = this.getProvCode(this.localForm.provinceDocument)
+      if (!provCode) {
+        return this.localForm.subdistrictDocument ? [this.localForm.subdistrictDocument] : []
+      }
+      const dist = this.findDistrict(provCode, this.localForm.districtDocument)
+      if (!dist) {
+        return this.localForm.subdistrictDocument ? [this.localForm.subdistrictDocument] : []
+      }
+      const list = this.geoSubdistricts
+        .filter(s => Math.floor(s.id / 100) === dist.id)
+        .map(s => s.nameTh)
+      if (this.localForm.subdistrictDocument && !list.includes(this.localForm.subdistrictDocument)) {
+        return [this.localForm.subdistrictDocument, ...list]
+      }
+      return list
+    },
+    zipcodeDocumentOptions () {
+      return this.getZipcodeOptions(
+        this.localForm.provinceDocument,
+        this.localForm.districtDocument,
+        this.localForm.subdistrictDocument,
+        this.localForm.zipcodeDocument
+      )
     }
   },
 
@@ -1084,6 +1302,7 @@ export default {
   },
 
   mounted () {
+    this.loadGeoData()
     if (this.localForm.name1Th && !this.localForm.name1En) {
       const prefixMap = { นาย: 'Mr.', นาง: 'Mrs.', นางสาว: 'Miss' }
       this.localForm.name1En = prefixMap[this.localForm.name1Th] || ''
@@ -1156,6 +1375,204 @@ export default {
         this.localForm.subdistrictDocument = ''
         this.localForm.zipcodeDocument = ''
         this.localForm.phoneDocument = ''
+      }
+    },
+    cleanName (name, type) {
+      if (!name) { return '' }
+      let str = String(name).trim()
+      if (type === 'province') {
+        str = str.replace(/^จังหวัด/, '')
+      } else if (type === 'district') {
+        str = str.replace(/^(อำเภอ|เขต)/, '')
+      } else if (type === 'subdistrict') {
+        str = str.replace(/^(ตำบล|แขวง)/, '')
+      }
+      return str.trim()
+    },
+    getProvCode (name) {
+      if (!name) { return null }
+      const clean = this.cleanName(name, 'province')
+      return PROV_CODE_MAP[name] || PROV_CODE_MAP[clean] || null
+    },
+    findProvince (name) {
+      if (!name) { return null }
+      const target = String(name).trim()
+      const cleanTarget = this.cleanName(target, 'province')
+      return this.geoProvinces.find(p => p.nameTh === target || this.cleanName(p.nameTh, 'province') === cleanTarget) || null
+    },
+    findDistrict (provCode, name) {
+      if (!provCode || !name) { return null }
+      const target = String(name).trim()
+      const cleanTarget = this.cleanName(target, 'district')
+      return this.geoDistricts.find((d) => {
+        if (Math.floor(d.id / 100) !== provCode) { return false }
+        return d.nameTh === target || this.cleanName(d.nameTh, 'district') === cleanTarget
+      }) || null
+    },
+    findSubdistrict (distId, name) {
+      if (!distId || !name) { return null }
+      const target = String(name).trim()
+      const cleanTarget = this.cleanName(target, 'subdistrict')
+      return this.geoSubdistricts.find((s) => {
+        if (Math.floor(s.id / 100) !== distId) { return false }
+        return s.nameTh === target || this.cleanName(s.nameTh, 'subdistrict') === cleanTarget
+      }) || null
+    },
+    getZipcodeOptions (provName, distName, subName, currentZip) {
+      const provCode = this.getProvCode(provName)
+      if (!provCode) {
+        return currentZip ? [currentZip] : []
+      }
+      const dist = this.findDistrict(provCode, distName)
+      if (!dist) {
+        return currentZip ? [currentZip] : []
+      }
+      if (subName) {
+        const sub = this.findSubdistrict(dist.id, subName)
+        if (sub && sub.zipCode) {
+          const z = String(sub.zipCode)
+          return currentZip && currentZip !== z ? [z, currentZip] : [z]
+        }
+      }
+      const zips = this.geoSubdistricts
+        .filter(s => Math.floor(s.id / 100) === dist.id && s.zipCode)
+        .map(s => String(s.zipCode))
+      const set = new Set(zips)
+      if (currentZip) {
+        set.add(currentZip)
+      }
+      return Array.from(set)
+    },
+    async loadGeoData () {
+      if (cachedGeoData) {
+        this.geoProvinces = cachedGeoData.provinces
+        this.geoDistricts = cachedGeoData.districts
+        this.geoSubdistricts = cachedGeoData.subdistricts
+        return
+      }
+
+      this.isLoadingGeo = true
+      try {
+        const [resProv, resDist, resSub] = await Promise.all([
+          import('~/assets/data/geography/provinces.json').then(m => m.default || m),
+          import('~/assets/data/geography/districts.json').then(m => m.default || m),
+          import('~/assets/data/geography/subdistricts.json').then(m => m.default || m)
+        ])
+
+        const provinces = Array.isArray(resProv) ? resProv : []
+        const districts = Array.isArray(resDist) ? resDist : []
+        const subdistricts = Array.isArray(resSub) ? resSub : []
+
+        cachedGeoData = {
+          provinces,
+          districts,
+          subdistricts
+        }
+
+        this.geoProvinces = provinces
+        this.geoDistricts = districts
+        this.geoSubdistricts = subdistricts
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.error('Failed to load geo data', err)
+      } finally {
+        this.isLoadingGeo = false
+      }
+    },
+    onProvinceChange () {
+      const provCode = this.getProvCode(this.localForm.province)
+      const dist = provCode ? this.findDistrict(provCode, this.localForm.district) : null
+      if (!dist) {
+        this.localForm.district = ''
+        this.localForm.subdistrict = ''
+        this.localForm.zipcode = ''
+      }
+    },
+    onDistrictChange () {
+      const provCode = this.getProvCode(this.localForm.province)
+      const dist = provCode ? this.findDistrict(provCode, this.localForm.district) : null
+      const sub = dist ? this.findSubdistrict(dist.id, this.localForm.subdistrict) : null
+      if (!sub) {
+        this.localForm.subdistrict = ''
+        this.localForm.zipcode = ''
+      }
+    },
+    onSubdistrictChange (subName) {
+      if (!subName) {
+        this.localForm.zipcode = ''
+        return
+      }
+      const provCode = this.getProvCode(this.localForm.province)
+      if (!provCode) { return }
+      const dist = this.findDistrict(provCode, this.localForm.district)
+      if (!dist) { return }
+      const sub = this.findSubdistrict(dist.id, subName)
+      if (sub && sub.zipCode) {
+        this.localForm.zipcode = String(sub.zipCode)
+      }
+    },
+    onProvinceContactChange () {
+      const provCode = this.getProvCode(this.localForm.provinceContact)
+      const dist = provCode ? this.findDistrict(provCode, this.localForm.districtContact) : null
+      if (!dist) {
+        this.localForm.districtContact = ''
+        this.localForm.subdistrictContact = ''
+        this.localForm.zipcodeContact = ''
+      }
+    },
+    onDistrictContactChange () {
+      const provCode = this.getProvCode(this.localForm.provinceContact)
+      const dist = provCode ? this.findDistrict(provCode, this.localForm.districtContact) : null
+      const sub = dist ? this.findSubdistrict(dist.id, this.localForm.subdistrictContact) : null
+      if (!sub) {
+        this.localForm.subdistrictContact = ''
+        this.localForm.zipcodeContact = ''
+      }
+    },
+    onSubdistrictContactChange (subName) {
+      if (!subName) {
+        this.localForm.zipcodeContact = ''
+        return
+      }
+      const provCode = this.getProvCode(this.localForm.provinceContact)
+      if (!provCode) { return }
+      const dist = this.findDistrict(provCode, this.localForm.districtContact)
+      if (!dist) { return }
+      const sub = this.findSubdistrict(dist.id, subName)
+      if (sub && sub.zipCode) {
+        this.localForm.zipcodeContact = String(sub.zipCode)
+      }
+    },
+    onProvinceDocumentChange () {
+      const provCode = this.getProvCode(this.localForm.provinceDocument)
+      const dist = provCode ? this.findDistrict(provCode, this.localForm.districtDocument) : null
+      if (!dist) {
+        this.localForm.districtDocument = ''
+        this.localForm.subdistrictDocument = ''
+        this.localForm.zipcodeDocument = ''
+      }
+    },
+    onDistrictDocumentChange () {
+      const provCode = this.getProvCode(this.localForm.provinceDocument)
+      const dist = provCode ? this.findDistrict(provCode, this.localForm.districtDocument) : null
+      const sub = dist ? this.findSubdistrict(dist.id, this.localForm.subdistrictDocument) : null
+      if (!sub) {
+        this.localForm.subdistrictDocument = ''
+        this.localForm.zipcodeDocument = ''
+      }
+    },
+    onSubdistrictDocumentChange (subName) {
+      if (!subName) {
+        this.localForm.zipcodeDocument = ''
+        return
+      }
+      const provCode = this.getProvCode(this.localForm.provinceDocument)
+      if (!provCode) { return }
+      const dist = this.findDistrict(provCode, this.localForm.districtDocument)
+      if (!dist) { return }
+      const sub = this.findSubdistrict(dist.id, subName)
+      if (sub && sub.zipCode) {
+        this.localForm.zipcodeDocument = String(sub.zipCode)
       }
     }
   }

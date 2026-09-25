@@ -186,12 +186,6 @@
         <span class="text-field-value"> {{ localForm.mobile || '-' }} </span>
       </v-col>
       <v-col cols="6" md="3" class="py-0">
-        <span class="text-field-label">เบอร์โทรฉุกเฉิน</span>
-      </v-col>
-      <v-col cols="6" md="3" class="py-0">
-        <span class="text-field-value"> {{ localForm.emergencyPhone || '-' }} </span>
-      </v-col>
-      <v-col cols="6" md="3" class="py-0">
         <span class="text-field-label">อีเมล</span>
       </v-col>
       <v-col cols="6" md="3" class="py-0">
@@ -470,7 +464,7 @@
     <v-row>
       <v-col cols="12" md="12">
         <span style="font-size: 24px; font-weight: bold;">
-          มาตรา 12(2)
+          ตามมาตรา 12 (2)
         </span>
       </v-col>
     </v-row>
@@ -538,7 +532,7 @@
       </v-col>
     </v-row>
 
-    <v-row v-if="localForm.qualification_declarations.thai_medicine.status">
+    <v-row v-if="localForm.qualification_declarations && localForm.qualification_declarations.thai_medicine && localForm.qualification_declarations.thai_medicine.status">
       <v-col cols="12" md="12">
         <span class="text-field-value">
           - มีความรู้ในวิชาชีพการแพทย์แผนไทย เพื่อการประกอบวิชาชีพการแพทย์แผนไทย
@@ -580,7 +574,7 @@
       </v-col>
     </v-row>
 
-    <v-row v-if="localForm.qualification_declarations.thai_applied.status">
+    <v-row v-if="localForm.qualification_declarations && localForm.qualification_declarations.thai_applied && localForm.qualification_declarations.thai_applied.status">
       <v-col cols="12" md="12">
         <span class="text-field-value">
           - มีความรู้ในวิชาชีพการแพทย์แผนไทย เพื่อการประกอบวิชาชีพการแพทย์แผนไทยประยุกต์
@@ -643,6 +637,30 @@
         </v-btn>
       </div>
     </template>
+
+    <v-divider class="my-6" />
+
+    <v-row>
+      <v-col cols="12">
+        <v-card outlined class="pa-4 physical-docs-note">
+          <div class="physical-docs-note__title">
+            <v-icon color="#327531" class="mr-2">
+              mdi-information-outline
+            </v-icon>
+            เอกสารที่ต้องจัดส่งตัวจริงมายังสภาการแพทย์แผนไทย
+          </div>
+          <ul class="physical-docs-note__list">
+            <li>ชุดใบคำร้อง พร้อมติดรูปถ่าย 1 นิ้ว 1 รูป</li>
+            <li>สำเนาบัตรประชาชน 1 ฉบับ พร้อมรับรองสำเนา</li>
+            <li>รูปถ่าย ขนาด 1 นิ้ว ด้านละ 2 รูป</li>
+            <li>หลักฐานอื่นๆถ้ามี</li>
+          </ul>
+          <div class="physical-docs-note__contact">
+            หากมีข้อสงสัย ติดต่อ 025-801-157 ต่อ 16
+          </div>
+        </v-card>
+      </v-col>
+    </v-row>
 
     <v-divider class="my-6" />
 
@@ -718,35 +736,37 @@
       </v-card>
     </template> -->
 
-    <v-divider class="my-6" />
+    <!-- เอกสารแนบใบอนุญาต (ถ้ามี) -->
+    <template v-if="hasEvidences">
+      <v-divider class="my-6" />
 
-    <v-row>
-      <v-col cols="12">
-        <span style="font-size: 24px; font-weight: bold;">
-          ข้าพเจ้าได้แนบหลักฐานประกอบการพิจารณาดังต่อไปนี้
-        </span>
-      </v-col>
-    </v-row>
+      <v-row>
+        <v-col cols="12">
+          <span style="font-size: 24px; font-weight: bold;">
+            ข้าพเจ้าได้แนบหลักฐานประกอบการพิจารณาดังต่อไปนี้
+          </span>
+        </v-col>
+      </v-row>
 
-    <!-- เอกสารแนบ -->
-    <template v-for="(item, i) in evidenceList">
-      <div v-if="evidenceStatus(item.value)" :key="'ev-' + i" class="mb-2">
-        <v-icon color="#4fb24d" size="20" class="mr-1">
-          mdi-check-circle
-        </v-icon>
-        <span style="white-space: pre-line;">{{ item.label }}</span>
-        <v-btn
-          v-if="readonly && attachmentFileUrl('evidences', item.value)"
-          :href="attachmentFileUrl('evidences', item.value)"
-          target="_blank"
-          rel="noopener noreferrer"
-          text
-          color="#327531"
-          class="ml-2"
-        >
-          ดูเอกสาร
-        </v-btn>
-      </div>
+      <template v-for="(item, i) in evidenceList">
+        <div v-if="evidenceStatus(item.value)" :key="'ev-' + i" class="mb-2">
+          <v-icon color="#4fb24d" size="20" class="mr-1">
+            mdi-check-circle
+          </v-icon>
+          <span style="white-space: pre-line;">{{ item.label }}</span>
+          <v-btn
+            v-if="readonly && attachmentFileUrl('evidences', item.value)"
+            :href="attachmentFileUrl('evidences', item.value)"
+            target="_blank"
+            rel="noopener noreferrer"
+            text
+            color="#327531"
+            class="ml-2"
+          >
+            ดูเอกสาร
+          </v-btn>
+        </div>
+      </template>
     </template>
 
     <v-divider class="my-6" />
@@ -913,10 +933,19 @@ export default {
 
       localForm: {
         ...this.value,
+        evidences: {
+          id_card: { status: false, file: null },
+          photo: { status: false, file: null },
+          other_evidence: { status: false, file: null },
+          ...(this.value?.evidences || {})
+        },
+        attachments: {
+          ...(this.value?.attachments || {})
+        },
         consents: {
           agreeApply: false,
           agreeTrue: false,
-          ...(this.value.consents || {})
+          ...(this.value?.consents || {})
         }
       }
     }
@@ -971,9 +1000,11 @@ export default {
     },
     isTrainedsValid () {
       let validate = false
-      for (const key in this.localForm.traineds) {
-        if (this.localForm.traineds[key].status === true) {
-          validate = true
+      if (this.localForm.traineds) {
+        for (const key in this.localForm.traineds) {
+          if (this.localForm.traineds[key]?.status === true) {
+            validate = true
+          }
         }
       }
       return validate
@@ -981,9 +1012,13 @@ export default {
     documentDeliveryMethodLabel () {
       const labels = {
         postal: 'จัดส่งทางไปรษณีย์ (ค่าธรรมเนียม 100 บาท)',
-        self_pickup: 'รับด้วยตนเองที่สภาการแพทย์แผนไทย'
+        self_pickup: 'รับด้วยตนเองที่สภาการแพทย์แผนไทย (รอทางสภาฯประกาศแจ้ง)'
       }
       return labels[this.localForm.documentDeliveryMethod] || '-'
+    },
+    hasEvidences () {
+      if (!this.localForm.evidences) { return false }
+      return this.evidenceList.some(item => this.evidenceStatus(item.value))
     }
   },
   watch: {
@@ -1030,23 +1065,25 @@ export default {
     },
 
     qMedData (key) {
-      return this.localForm.qualification_declarations.thai_medicine.data[key]
+      return this.localForm.qualification_declarations?.thai_medicine?.data?.[key] || {}
     },
 
     attachmentsStatus (key) {
-      const item = this.localForm.attachments[key]
+      if (!this.localForm.attachments) { return false }
+      const item = this.localForm.attachments[key] || (key === 'residence' ? this.localForm.attachments.house_registration : null)
       // evidences เก็บเป็น boolean ในบาง version หรือ { status, file } ในอีก version, เผื่อไว้ทั้งสองแบบ
       return typeof item === 'object' ? !!(item && item.status) : !!item
     },
 
     evidenceStatus (key) {
+      if (!this.localForm.evidences) { return false }
       const item = this.localForm.evidences[key]
       // evidences เก็บเป็น boolean ในบาง version หรือ { status, file } ในอีก version, เผื่อไว้ทั้งสองแบบ
       return typeof item === 'object' ? !!(item && item.status) : !!item
     },
 
     attachmentFileUrl (group, key) {
-      return this.localForm[group]?.[key]?.file?.url || ''
+      return this.localForm[group]?.[key]?.file?.url || (key === 'residence' ? this.localForm[group]?.house_registration?.file?.url : '') || ''
     }
   }
 }
@@ -1067,6 +1104,15 @@ export default {
 .readonly-view ::v-deep .v-input--is-disabled input {
   color: rgba(0, 0, 0, 0.87) !important;
   opacity: 1 !important;
+}
+.physical-docs-note { border-color: #327531 !important; }
+.physical-docs-note__title { display: flex; align-items: center; margin-bottom: 10px; color: #327531; font-size: 22px; font-weight: bold; }
+.physical-docs-note__list { margin: 0 0 10px; padding-left: 22px; color: #424242; font-size: 19px; line-height: 1.6; }
+.physical-docs-note__contact { color: #424242; font-size: 19px; font-weight: bold; }
+@media screen and (max-width: 600px) {
+  .section-heading { font-size: 21px; }
+  .physical-docs-note__title { font-size: 20px; }
+  .physical-docs-note__list, .physical-docs-note__contact { font-size: 17px; }
 }
 /* AddressSection ใช้ FieldRow ซ้ำในรูปแบบเดียวกัน จึงประกาศ local component แบบ functional ผ่าน render ด้านล่าง */
 </style>

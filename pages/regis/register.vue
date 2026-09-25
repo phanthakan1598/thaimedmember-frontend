@@ -62,18 +62,10 @@
           @next="step++"
         />
 
-        <Step3Certificate
+        <Step4View
           v-if="step === 3"
           v-model="form"
           @click="step = 3"
-          @back="step--"
-          @next="step++"
-        />
-
-        <Step4View
-          v-if="step === 4"
-          v-model="form"
-          @click="step = 4"
           @back="step--"
           @submit="submit"
         />
@@ -105,6 +97,15 @@ export default {
       province: [],
       selectGender: [],
       chooseWorkType: []
+    }
+  },
+  watch: {
+    step () {
+      this.$nextTick(() => {
+        if (typeof window !== 'undefined') {
+          window.scrollTo({ top: 0, behavior: 'smooth' })
+        }
+      })
     }
   },
   created () {
@@ -166,7 +167,7 @@ export default {
         road: customer.Road || '',
         subdistrict: customer.District || '',
         district: customer.Amphur || '',
-        province: '',
+        province: customer.Province || '',
         zipcode: customer.Zipcode || '',
         phone: customer.Telephone || '',
         professions,
@@ -178,7 +179,9 @@ export default {
           thai_applied: {
             status: professions.thai_applied === true
           }
-        }
+        },
+        evidences: {},
+        attachments: {}
       }
     },
 

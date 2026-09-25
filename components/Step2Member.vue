@@ -14,7 +14,7 @@
       />
 
       <h2 class="text-h6 font-weight-bold mb-0" style="color: #327531;">
-        ขอเป็นสมาชิกสภาฯ
+        ขอเป็นสมาชิกสภาฯ และใบอนุญาต
       </h2>
     </div>
 
@@ -60,7 +60,7 @@
         <v-row>
           <v-col cols="12" md="12">
             <span style="font-size: 24px; font-weight: bold;">
-              มาตรา 12(2)
+              ตามมาตรา 12 (2)
             </span>
           </v-col>
         </v-row>
@@ -111,8 +111,9 @@
                     :name="'trainedsDate'+index"
                     rules="required|digits:4"
                   >
-                    <v-text-field
+                    <v-autocomplete
                       v-model="localForm.traineds[item.value].date"
+                      :items="yearList"
                       placeholder="ระบุปี พ.ศ. (ปปปป)"
                       outlined
                       dense
@@ -175,8 +176,9 @@
                           :name="'theoryExamDate'+ index"
                           rules="required|digits:4"
                         >
-                          <v-text-field
+                          <v-autocomplete
                             v-model="localForm.qualification_declarations.thai_medicine.data[item.value].theoryExamDate"
+                            :items="yearList"
                             placeholder="ระบุปี พ.ศ. (ปปปป)"
                             outlined
                             dense
@@ -194,8 +196,9 @@
                           :name="'practicalExamDate' + index"
                           rules="required|digits:4"
                         >
-                          <v-text-field
+                          <v-autocomplete
                             v-model="localForm.qualification_declarations.thai_medicine.data[item.value].practicalExamDate"
+                            :items="yearList"
                             placeholder="ระบุปี พ.ศ. (ปปปป)"
                             outlined
                             dense
@@ -244,8 +247,9 @@
                         :name="item.value"
                         rules="required|digits:4"
                       >
-                        <v-text-field
+                        <v-autocomplete
                           v-model="localForm.qualification_declarations.thai_applied[item.value]"
+                          :items="yearList"
                           placeholder="ระบุปี พ.ศ. (ปปปป)"
                           outlined
                           dense
@@ -263,6 +267,44 @@
         <span v-if="showQualDeclError" class="red--text" style="font-size: 22px;">
           กรุณาเพิ่มข้อมูลอย่างน้อย 1 อย่าง
         </span>
+
+        <v-divider class="my-6" />
+
+        <v-row>
+          <v-col cols="12">
+            <span style="font-size: 24px; font-weight: bold;">
+              ข้าพเจ้ามีความประสงค์ขอขึ้นทะเบียนและรับใบอนุญาต
+            </span>
+          </v-col>
+        </v-row>
+
+        <v-row>
+          <v-col cols="12">
+            <v-card outlined class="pa-4">
+              <v-row
+                v-for="(item, index) in availableProfessionList"
+                :key="'profession-' + index"
+              >
+                <v-col cols="12" class="py-1 mb-1">
+                  <v-checkbox
+                    v-model="localForm.professions[item.value]"
+                    :label="item.label"
+                    dense
+                    hide-details
+                  />
+                </v-col>
+              </v-row>
+            </v-card>
+
+            <span
+              v-if="showProfessionError"
+              style="font-size: 22px;"
+              class="red--text mt-2"
+            >
+              กรุณาเลือกอย่างน้อย 1 ด้าน
+            </span>
+          </v-col>
+        </v-row>
 
         <v-divider class="my-6" />
 
@@ -336,6 +378,61 @@
                 </v-col>
               </v-row>
             </v-card>
+          </v-col>
+        </v-row>
+
+        <v-divider class="my-6" />
+
+        <v-row>
+          <v-col cols="12">
+            <v-card outlined class="pa-4 physical-docs-note">
+              <div class="physical-docs-note__title">
+                <v-icon color="#327531" class="mr-2">
+                  mdi-information-outline
+                </v-icon>
+                เอกสารที่ต้องจัดส่งตัวจริงมายังสภาการแพทย์แผนไทย
+              </div>
+              <ul class="physical-docs-note__list">
+                <li>ชุดใบคำร้อง พร้อมติดรูปถ่าย 1 นิ้ว 1 รูป</li>
+                <li>สำเนาบัตรประชาชน 1 ฉบับ พร้อมรับรองสำเนา</li>
+                <li>รูปถ่าย ขนาด 1 นิ้ว ด้านละ 2 รูป</li>
+                <li>หลักฐานอื่นๆถ้ามี</li>
+              </ul>
+              <div class="physical-docs-note__contact">
+                หากมีข้อสงสัย ติดต่อ 025-801-157 ต่อ 16
+              </div>
+            </v-card>
+          </v-col>
+        </v-row>
+
+        <v-divider class="my-6" />
+
+        <v-row>
+          <v-col cols="12">
+            <div class="font-weight-bold mb-2">
+              วิธีการรับหนังสือสำคัญการเป็นสมาชิกสภาการแพทย์แผนไทยและใบอนุญาต
+              <span class="red--text">*</span>
+            </div>
+
+            <validation-provider
+              v-slot="{ errors }"
+              name="วิธีการรับหนังสือสำคัญ"
+              rules="required"
+            >
+              <v-radio-group
+                v-model="localForm.documentDeliveryMethod"
+                :error-messages="errors"
+              >
+                <v-radio
+                  label="จัดส่งทางไปรษณีย์ (ค่าธรรมเนียม 100 บาท)"
+                  value="postal"
+                />
+                <v-radio
+                  label="รับด้วยตนเองที่สภาการแพทย์แผนไทย (รอทางสภาฯประกาศแจ้ง)"
+                  value="self_pickup"
+                />
+              </v-radio-group>
+            </validation-provider>
           </v-col>
         </v-row>
 
@@ -443,6 +540,15 @@ export default {
 
       qualDeclMedTouched: false,
       qualDeclTouched: false,
+      professionTouched: false,
+      professionList: [
+        { value: 'thai_medicine', label: 'วิชาชีพการแพทย์แผนไทย ด้านเวชกรรมไทย' },
+        { value: 'thai_pharmacy', label: 'วิชาชีพการแพทย์แผนไทย ด้านเภสัชกรรมไทย' },
+        { value: 'thai_midwifery', label: 'วิชาชีพการแพทย์แผนไทย ด้านผดุงครรภ์ไทย' },
+        { value: 'thai_massage', label: 'วิชาชีพการแพทย์แผนไทย ด้านนวดไทย' },
+        { value: 'folk_medicine', label: 'วิชาชีพการแพทย์แผนไทย ด้านแพทย์พื้นบ้าน' },
+        { value: 'thai_applied', label: 'วิชาชีพการแพทย์แผนไทยประยุกต์' }
+      ],
       maxFileSizeMB: 2,
       attachmentList: [
         {
@@ -593,13 +699,31 @@ export default {
             file: null,
             ...(this.value.attachments?.other_evidence || {})
           }
-        }
+        },
+        professions: {
+          thai_medicine: false,
+          thai_pharmacy: false,
+          thai_midwifery: false,
+          thai_massage: false,
+          folk_medicine: false,
+          thai_applied: false,
+          ...(this.value.professions || {})
+        },
+        documentDeliveryMethod: this.value.documentDeliveryMethod || 'postal'
       }
 
     }
   },
 
   computed: {
+    yearList () {
+      const currentYearBE = new Date().getFullYear() + 543
+      const years = []
+      for (let y = currentYearBE; y >= currentYearBE - 120; y--) {
+        years.push(String(y))
+      }
+      return years
+    },
     isQualDeclValid () {
       return (
         this.localForm.qualification_declarations.thai_medicine.status ||
@@ -621,10 +745,51 @@ export default {
 
     showQualDeclMedError () {
       return this.qualDeclMedTouched && !this.isQualDeclMedValid
+    },
+
+    availableProfessionList () {
+      const declarations = this.localForm.qualification_declarations || {}
+      const thaiMedicine = declarations.thai_medicine || {}
+      const thaiMedicineData = thaiMedicine.data || {}
+      const thaiApplied = declarations.thai_applied || {}
+
+      return this.professionList.filter((profession) => {
+        if (profession.value === 'thai_applied') {
+          return thaiApplied.status === true
+        }
+
+        return thaiMedicine.status === true &&
+          thaiMedicineData[profession.value]?.status === true
+      })
+    },
+
+    availableProfessionValues () {
+      return this.availableProfessionList.map(profession => profession.value)
+    },
+
+    isProfessionValid () {
+      return this.availableProfessionValues.some((profession) => {
+        return this.localForm.professions[profession] === true
+      })
+    },
+
+    showProfessionError () {
+      return this.professionTouched && !this.isProfessionValid
     }
   },
 
   watch: {
+    availableProfessionValues: {
+      handler (availableValues) {
+        Object.keys(this.localForm.professions).forEach((profession) => {
+          if (!availableValues.includes(profession)) {
+            this.localForm.professions[profession] = false
+          }
+        })
+      },
+      immediate: true
+    },
+
     localForm: {
       handler (val) {
         this.$emit('input', val)
@@ -643,8 +808,16 @@ export default {
     async nextStep () {
       this.qualDeclMedTouched = true
       this.qualDeclTouched = true
+      this.professionTouched = true
       const formValid = await this.$refs.step2.validate()
-      if (!formValid || !this.isQualDeclMedValid || !this.isQualDeclValid) { return }
+      if (
+        !formValid ||
+        !this.isQualDeclMedValid ||
+        !this.isQualDeclValid ||
+        !this.isProfessionValid
+      ) {
+        return
+      }
       this.$emit('next')
     },
     backStep () {
@@ -720,4 +893,13 @@ export default {
 </script>
 
 <style scoped>
+.physical-docs-note { border-color: #327531 !important; }
+.physical-docs-note__title { display: flex; align-items: center; margin-bottom: 10px; color: #327531; font-size: 22px; font-weight: bold; }
+.physical-docs-note__list { margin: 0 0 10px; padding-left: 22px; color: #424242; font-size: 19px; line-height: 1.6; }
+.physical-docs-note__contact { color: #424242; font-size: 19px; font-weight: bold; }
+@media screen and (max-width: 600px) {
+  .section-heading { font-size: 21px; }
+  .physical-docs-note__title { font-size: 20px; }
+  .physical-docs-note__list, .physical-docs-note__contact { font-size: 17px; }
+}
 </style>
