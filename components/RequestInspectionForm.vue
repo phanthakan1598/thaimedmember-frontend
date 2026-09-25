@@ -21,7 +21,7 @@
             <v-radio-group v-model="form.workplaceType" :error-messages="errors.workplaceType || workplaceErrors" @change="onWorkplaceChange">
               <v-radio label="หน่วยงานส่วนราชการ" value="government" />
               <v-radio label="หน่วยงานภาคเอกชน" value="private" />
-              <v-radio label="อื่น ๆ" value="other" />
+              <v-radio label="บุคคลธรรมดา" value="other" />
             </v-radio-group>
           </validation-provider>
           <validation-provider v-slot="{ errors: workplaceNameErrors }" name="ชื่อสถานที่ทำงาน" rules="required">
@@ -79,7 +79,7 @@
       </v-col>
       <v-col cols="12">
         <v-card outlined class="pa-4">
-          <div v-for="item in evidenceItems" :key="item.value" class="mb-3">
+          <div v-for="item in visibleEvidenceItems" :key="item.value" class="mb-3">
             <validation-provider v-slot="{ errors: statusErrors }" :name="item.label" :rules="item.required ? 'mustBeTrue' : ''">
               <v-checkbox v-model="form.evidences[item.value].status" dense hide-details :error-messages="errors[item.value + 'Status'] || statusErrors" @change="onEvidenceStatusChange(item.value, $event)">
                 <template #label>
@@ -164,25 +164,32 @@ const labels = { thai_medicine: 'ด้านเวชกรรมไทย', th
 export default {
   name: 'RequestInspectionForm',
   props: { value: { type: Object, required: true }, isPublic: { type: Boolean, default: false } },
-  data () { const types = Object.keys(labels); return { form: { workplaceType: '', workplaceName: '', professions: types.reduce((o, key) => ({ ...o, [key]: false }), {}), evidences: { workplace_certificate: { status: true, file: null }, id_card: { status: false, file: null }, inspection_letter: { status: false, file: null }, payment_receipt: { status: false, file: null }, other_evidence: { status: false, file: null } }, documentDeliveryMethod: '', documentAddress: { ...(this.value.documentAddress || {}) } }, evidenceItems: [{ value: 'id_card', label: 'สำเนาบัตรประจำตัวประชาชน หรือสำเนาบัตรประจำตัวเจ้าหน้าที่ของรัฐ หรือสำเนาบัตรพนักงานของรัฐ หรือเอกสารอื่นที่ทางราชการออกให้ซึ่งมีรูปถ่าย', required: true }, { value: 'inspection_letter', label: 'หนังสือรับรองขอตรวจสอบใบอนุญาตจากหน่วยงานส่วนราชการหรือหน่วยงานภาคเอกชน', required: true }, { value: 'payment_receipt', label: 'สำเนาใบเสร็จรับเงินค่าธรรมเนียม', required: true }, { value: 'other_evidence', label: 'เอกสารหลักฐานอื่น ๆ เช่น หลักฐานการมอบอำนาจ (ถ้ามี)', required: false }], errors: {} } },
+  data () { const types = Object.keys(labels); return { form: { workplaceType: '', workplaceName: '', professions: types.reduce((o, key) => ({ ...o, [key]: false }), {}), evidences: { workplace_certificate: { status: true, file: null }, id_card: { status: false, file: null }, inspection_letter: { status: false, file: null }, payment_receipt: { status: false, file: null }, other_evidence: { status: false, file: null } }, documentDeliveryMethod: '', documentAddress: { ...(this.value.documentAddress || {}) } }, evidenceItems: [{ value: 'id_card', label: 'สำเนาบัตรประจำตัวประชาชน หรือสำเนาบัตรประจำตัวเจ้าหน้าที่ของรัฐ หรือสำเนาบัตรพนักงานของรัฐ หรือเอกสารอื่นที่ทางราชการออกให้ซึ่งมีรูปถ่าย', required: true, individualOnly: false }, { value: 'inspection_letter', label: 'หนังสือรับรองขอตรวจสอบใบอนุญาตจากหน่วยงานส่วนราชการหรือหน่วยงานภาคเอกชน', required: true, individualOnly: false }, { value: 'payment_receipt', label: 'สำเนาใบเสร็จรับเงินค่าธรรมเนียม', required: true, individualOnly: true }, { value: 'other_evidence', label: 'เอกสารหลักฐานอื่น ๆ เช่น หลักฐานการมอบอำนาจ (ถ้ามี)', required: false, individualOnly: false }], errors: {} } },
   computed: {
     applicantNameTh () { const a = this.value.applicant || {}; return [a.prefixTh, a.firstNameTh, a.lastNameTh].filter(Boolean).join(' ') },
     applicantNameEn () { const a = this.value.applicant || {}; return [a.prefixEn, a.firstNameEn, a.lastNameEn].filter(Boolean).join(' ') },
     professionList () { return Object.entries(labels).map(([value, label]) => ({ value, labelWithLicense: label })) },
     selectedCount () { return Object.values(this.form.professions).filter(Boolean).length },
     workplaceLabel () { return this.form.workplaceType === 'other' ? 'โปรดระบุสถานที่ทำงาน' : 'ชื่อหน่วยงาน/สถานที่ทำงาน' },
-    inspectionFee () { return this.form.workplaceType && this.form.workplaceType !== 'government' ? 200 : 0 },
-    deliveryFee () { return this.form.documentDeliveryMethod === 'postal' ? 100 : 0 },
+    visibleEvidenceItems () { return this.evidenceItems.filter(item => !item.individualOnly || this.form.workplaceType === 'other') },
+    inspectionFee () { return this.form.workplaceType === 'other' ? 200 : 0 },
+    deliveryFee () { return this.form.workplaceType === 'other' && this.form.documentDeliveryMethod === 'postal' ? 100 : 0 },
     totalPrice () { return this.inspectionFee + this.deliveryFee + 45 },
     documentAddressText () { const a = this.value.documentAddress || {}; return [a.address, a.moo && `หมู่ ${a.moo}`, a.building, a.soi && `ซอย ${a.soi}`, a.road && `ถนน ${a.road}`, a.subdistrict, a.district, a.province, a.zipcode].filter(Boolean).join(' ') || '-' }
   },
   methods: {
-    onWorkplaceChange () { this.errors = { ...this.errors, workplaceType: '', workplaceName: '' } },
+    onWorkplaceChange () {
+      this.errors = { ...this.errors, workplaceType: '', workplaceName: '' }
+      if (this.form.workplaceType !== 'other') {
+        this.form.evidences.payment_receipt = { status: false, file: null }
+        this.errors = { ...this.errors, payment_receiptStatus: '', payment_receipt: '' }
+      }
+    },
     clearError (key) { this.errors = { ...this.errors, [key]: '' } },
     validateProfessionSelection () { this.errors = { ...this.errors, professions: this.selectedCount ? '' : 'กรุณาเลือกอย่างน้อย 1 ด้าน' } },
     onEvidenceStatusChange (key, status) { if (!status) { this.form.evidences[key].file = null } this.errors = { ...this.errors, [key + 'Status']: '', [key]: '' } },
     onFileChange (key, file) { if (!file) { return } const ext = file.name.split('.').pop().toLowerCase(); if (!['pdf', 'jpg', 'jpeg'].includes(ext) || file.size > 2 * 1024 * 1024) { this.form.evidences[key].file = null; this.errors = { ...this.errors, [key]: 'ชนิดไฟล์ไม่ถูกต้องหรือไฟล์มีขนาดเกิน 2 MB' } } else { this.errors = { ...this.errors, [key]: '' } } },
-    validate () { const errors = {}; if (!this.form.workplaceType) { errors.workplaceType = 'กรุณาเลือกประเภทสถานที่ทำงาน' } if (!this.form.workplaceName) { errors.workplaceName = 'กรุณาระบุสถานที่ทำงาน' } if (!this.selectedCount) { errors.professions = 'กรุณาเลือกอย่างน้อย 1 ด้าน' } if (!this.form.evidences.workplace_certificate.file) { errors.workplace_certificate = 'กรุณาแนบหนังสือรับรองจากหน่วยงาน' } this.evidenceItems.forEach((item) => { const e = this.form.evidences[item.value]; if (item.required && !e.status) { errors[item.value + 'Status'] = 'กรุณาเลือกเอกสารรายการนี้' } if (item.required && e.status && !e.file) { errors[item.value] = 'กรุณาแนบไฟล์เอกสาร' } }); if (!this.form.documentDeliveryMethod) { errors.delivery = 'กรุณาเลือกวิธีรับเอกสาร' } if (this.isPublic && this.form.documentDeliveryMethod === 'postal' && (!this.form.documentAddress.address || !this.form.documentAddress.province || !this.form.documentAddress.zipcode)) { errors.delivery = 'กรุณากรอกที่อยู่จัดส่งให้ครบถ้วน' } this.errors = errors; return !Object.keys(errors).length },
+    validate () { const errors = {}; if (!this.form.workplaceType) { errors.workplaceType = 'กรุณาเลือกประเภทสถานที่ทำงาน' } if (!this.form.workplaceName) { errors.workplaceName = 'กรุณาระบุสถานที่ทำงาน' } if (!this.selectedCount) { errors.professions = 'กรุณาเลือกอย่างน้อย 1 ด้าน' } if (!this.form.evidences.workplace_certificate.file) { errors.workplace_certificate = 'กรุณาแนบหนังสือรับรองจากหน่วยงาน' } this.visibleEvidenceItems.forEach((item) => { const e = this.form.evidences[item.value]; if (item.required && !e.status) { errors[item.value + 'Status'] = 'กรุณาเลือกเอกสารรายการนี้' } if (item.required && e.status && !e.file) { errors[item.value] = 'กรุณาแนบไฟล์เอกสาร' } }); if (!this.form.documentDeliveryMethod) { errors.delivery = 'กรุณาเลือกวิธีรับเอกสาร' } if (this.isPublic && this.form.documentDeliveryMethod === 'postal' && (!this.form.documentAddress.address || !this.form.documentAddress.province || !this.form.documentAddress.zipcode)) { errors.delivery = 'กรุณากรอกที่อยู่จัดส่งให้ครบถ้วน' } this.errors = errors; return !Object.keys(errors).length },
     submit () { if (this.validate()) { this.$emit('submit', this.form) } },
     formatPrice (v) { return Number(v || 0).toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
   }

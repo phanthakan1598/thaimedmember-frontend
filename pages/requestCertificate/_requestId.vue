@@ -162,7 +162,7 @@ export default {
         .filter(([, value]) => value.status)
         .map(([key, value]) => ({ key, label: evidenceLabels[key] || key, url: value.file?.url || '' }))
     },
-    deliveryText () { return this.request.delivery?.method === 'ems' ? 'จัดส่งทางไปรษณีย์' : 'รับด้วยตนเองที่สภาการแพทย์แผนไทย' },
+    deliveryText () { return this.request.delivery?.method === 'ems' ? 'จัดส่งทางไปรษณีย์' : 'จัดส่งเป็นไฟล์ทาง E-mail' },
     documentAddressText () {
       const address = this.request.details?.documentAddress || {}
       return [address.address, address.moo && `หมู่ ${address.moo}`, address.building, address.soi && `ซอย ${address.soi}`, address.road && `ถนน ${address.road}`, address.subdistrict, address.district, address.province, address.zipcode].filter(Boolean).join(' ') || '-'

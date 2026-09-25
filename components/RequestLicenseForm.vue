@@ -246,6 +246,26 @@
         </v-card>
       </v-col>
     </v-row>
+
+    <v-row>
+      <v-col cols="12">
+        <v-card outlined class="pa-4 physical-docs-note">
+          <div class="physical-docs-note__title">
+            <v-icon color="#327531" class="mr-2">mdi-information-outline</v-icon>
+            เอกสารที่ต้องจัดส่งตัวจริงมายังสภาการแพทย์แผนไทย
+          </div>
+          <ul class="physical-docs-note__list">
+            <li>ชุดใบคำร้อง พร้อมติดรูปถ่าย 1 นิ้ว 1 รูป</li>
+            <li>สำเนาบัตรประชาชน 1 ฉบับ พร้อมรับรองสำเนา</li>
+            <li>รูปถ่าย ขนาด 1 นิ้ว ด้านละ 2 รูป</li>
+            <li>หลักฐานอื่นๆ ถ้ามี</li>
+          </ul>
+          <div class="physical-docs-note__contact">
+            หากมีข้อสงสัย ติดต่อ 025-801-157 ต่อ 16
+          </div>
+        </v-card>
+      </v-col>
+    </v-row>
     <v-divider class="my-6" />
 
     <v-row>
@@ -256,7 +276,7 @@
         </span>
         <v-radio-group v-model="form.documentDeliveryMethod" :error-messages="errors.delivery">
           <v-radio label="จัดส่งทางไปรษณีย์ (ค่าธรรมเนียม 100 บาท)" value="postal" />
-          <v-radio label="รับด้วยตนเองที่สภาการแพทย์แผนไทย" value="self_pickup" />
+          <v-radio label="รับด้วยตนเองที่สภาการแพทย์แผนไทย (รอทางสภาฯประกาศแจ้ง)" value="self_pickup" />
         </v-radio-group>
       </v-col>
     </v-row>
@@ -349,6 +369,10 @@ export default {
       ],
       evidenceItems: [
         { value: 'id_card', label: 'สำเนาบัตรประจำตัวประชาชน หรือสำเนาบัตรประจำตัวเจ้าหน้าที่ของรัฐ หรือสำเนาบัตรพนักงานของรัฐ หรือหนังสือเดินทาง หรือเอกสารคนต่างด้าว (พร้อมรับรองสำเนาถูกต้อง)', required: true, accept: 'pdf.' },
+        { value: 'house_registration', label: 'สำเนาทะเบียนบ้านหรือหลักฐานแสดงถิ่นที่อยู่', required: false, accept: 'pdf.' },
+        { value: 'education_certificate', label: 'สำเนาใบรายงานผลการศึกษาหรือสำเนาใบปริญญาบัตรหรือประกาศนียบัตรเทียบเท่าปริญญา', required: false, accept: 'pdf.' },
+        { value: 'exam_result_certificate', label: 'หนังสือแสดงผลการสอบผ่านความรู้จากสภาการแพทย์แผนไทย (ถ้ามี)', required: true, accept: 'pdf.' },
+        { value: 'health_certificate', label: 'หนังสือรับรองการตรวจสุขภาพหรือใบรับรองแพทย์เพื่อขอขึ้นทะเบียนและรับใบอนุญาตเป็นผู้ประกอบวิชาชีพ', required: false, accept: 'pdf.' },
         { value: 'photo', label: 'ภาพถ่ายขนาด 1 นิ้วแต่งกายสุภาพหน้าตรง ครึ่งตัวท่าปกติ ไม่สวมหมวก ไม่ใส่แว่นตา ซึ่งถ่ายไว้ไม่เกิน 6 เดือน จำนวน 2 ภาพ (ต้องไม่เป็นภาพถ่ายโพลาลอยด์) ต่อด้านที่ขอขึ้นทะเบียน ไม่รวมที่ติดชุดคำร้อง', required: true, accept: 'jpg., jpeg.' },
         { value: 'other_evidence', label: 'หลักฐานอื่นๆ (ถ้ามี)', required: false, accept: 'pdf.' }
       ],
@@ -366,6 +390,10 @@ export default {
         }, {}),
         evidences: {
           id_card: { status: false, file: null },
+          house_registration: { status: false, file: null },
+          education_certificate: { status: false, file: null },
+          exam_result_certificate: { status: false, file: null },
+          health_certificate: { status: false, file: null },
           photo: { status: false, file: null },
           other_evidence: { status: false, file: null }
         },
@@ -552,9 +580,15 @@ export default {
 .total-price { color: #327531; font-size: 24px; font-weight: bold; }
 .form-actions { gap: 12px; }
 .form-button { font-size: 16px; font-weight: bold; }
+.physical-docs-note { border-color: #327531 !important; }
+.physical-docs-note__title { display: flex; align-items: center; margin-bottom: 10px; color: #327531; font-size: 22px; font-weight: bold; }
+.physical-docs-note__list { margin: 0 0 10px; padding-left: 22px; color: #424242; font-size: 19px; line-height: 1.6; }
+.physical-docs-note__contact { color: #424242; font-size: 19px; font-weight: bold; }
 @media screen and (max-width: 600px) {
   .section-heading,
   .exam-label,
   .exam-field-heading > span { font-size: 22px !important; }
+  .physical-docs-note__title { font-size: 20px; }
+  .physical-docs-note__list, .physical-docs-note__contact { font-size: 17px; }
 }
 </style>

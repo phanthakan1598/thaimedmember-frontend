@@ -4,7 +4,7 @@
       <v-col cols="12">
         <v-card>
           <v-card-title class="page-title">
-            <strong>ขอใบแปลใบอนุญาต</strong>
+            <strong>ขอแปลใบอนุญาต</strong>
           </v-card-title>
           <div class="pa-md-6 pa-3">
             <RequestTranslationForm v-if="initialData" :value="initialData" @cancel="$router.push('/request')" @submit="confirmSubmit" />

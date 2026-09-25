@@ -2,7 +2,7 @@
   <div>
     <v-row>
       <v-col cols="12">
-        <span class="section-heading">ข้าพเจ้ามีความประสงค์ขอใบแปลใบอนุญาตในด้าน <span class="red--text">*</span></span>
+        <span class="section-heading">ข้าพเจ้ามีความประสงค์ขอแปลใบอนุญาตในด้าน <span class="red--text">*</span></span>
       </v-col>
       <v-col cols="12">
         <v-alert v-if="!hasLicenses" type="warning" outlined prominent>
@@ -77,6 +77,28 @@
         </v-card>
       </v-col>
     </v-row>
+
+    <v-row>
+      <v-col cols="12">
+        <v-card outlined class="pa-4 physical-docs-note">
+          <div class="physical-docs-note__title">
+            <v-icon color="#327531" class="mr-2">mdi-information-outline</v-icon>
+            เอกสารที่ต้องจัดส่งตัวจริงมายังสภาการแพทย์แผนไทย
+          </div>
+          <ul class="physical-docs-note__list">
+            <li>ใบคำขอแปลใบอนุญาต จำนวน 1 ฉบับ</li>
+            <li>สำเนาบัตรประชาชน (รับรองสำเนาถูกต้อง) จำนวน 1 ฉบับ</li>
+            <li>สำเนาใบประกอบวิชาชีพที่ต้องการแปล</li>
+            <li>รูปถ่าย ขนาด 1 นิ้ว จำนวน 2 รูป (ภาพสี แต่งกายชุดข้าราชการหรือชุดสุภาพ หน้าตรง ครึ่งตัว ท่าปกติ ไม่สวมหมวก ไม่สวมแว่นตาดำ และถ่ายไว้ไม่เกิน 6 เดือน)</li>
+            <li>สำเนาหลักฐานการชำระค่าธรรมเนียม</li>
+            <li>เอกสารอื่นๆ ตามกรณี (สำเนาทะเบียนบ้านหรือหลักฐานแสดงถิ่นที่อยู่ กรณีเปลี่ยนที่อยู่ติดต่อ / สำเนาหนังสือสำคัญการได้รับอนุมัติให้เปลี่ยนคำนำหน้า หรือยศ กรณีแก้ไขยศ)</li>
+          </ul>
+          <div class="physical-docs-note__contact">
+            หากมีข้อสงสัย ติดต่อ 025-801-157 ต่อ 16
+          </div>
+        </v-card>
+      </v-col>
+    </v-row>
     <v-divider class="my-6" />
     <v-row>
       <v-col cols="12">
@@ -121,7 +143,7 @@
 </template>
 
 <script>
-const professionLabels = { thai_medicine: 'วิชาชีพการแพทย์แผนไทย ด้านเวชกรรมไทย', thai_pharmacy: 'วิชาชีพการแพทย์แผนไทย ด้านเภสัชกรรมไทย', thai_midwifery: 'วิชาชีพการแพทย์แผนไทย ด้านผดุงครรภ์ไทย', thai_massage: 'วิชาชีพการแพทย์แผนไทย ด้านนวดไทย', folk_medicine: 'วิชาชีพการแพทย์แผนไทย ด้านแพทย์พื้นบ้าน', thai_applied: 'วิชาชีพการแพทย์แผนไทยประยุกต์' }
+const professionLabels = { thai_medicine: 'วิชาชีพการแพทย์แผนไทย ด้านเวชกรรมไทย', thai_pharmacy: 'วิชาชีพการแพทย์แผนไทย ด้านเภสัชกรรมไทย', thai_midwifery: 'วิชาชีพการแพทย์แผนไทย ด้านผดุงครรภ์ไทย', thai_massage: 'วิชาชีพการแพทย์แผนไทย ด้านนวดไทย', folk_medicine: 'วิชาชีพการแพทย์แผนไทย ด้านแพทย์พื้นบ้าน', thai_applied: 'วิชาชีพการแพทย์แผนไทย ด้านประยุกต์' }
 export default {
   name: 'RequestTranslationForm',
   props: { value: { type: Object, required: true } },
@@ -165,5 +187,13 @@ export default {
 .fee-summary { font-size: 20px; }
 .total-price { color: #327531; font-size: 24px; font-weight: bold; }
 .form-actions { gap: 12px; }
-@media screen and (max-width: 600px) { .section-heading { font-size: 21px; } }
+.physical-docs-note { border-color: #327531 !important; }
+.physical-docs-note__title { display: flex; align-items: center; margin-bottom: 10px; color: #327531; font-size: 22px; font-weight: bold; }
+.physical-docs-note__list { margin: 0 0 10px; padding-left: 22px; color: #424242; font-size: 19px; line-height: 1.6; }
+.physical-docs-note__contact { color: #424242; font-size: 19px; font-weight: bold; }
+@media screen and (max-width: 600px) {
+  .section-heading { font-size: 21px; }
+  .physical-docs-note__title { font-size: 20px; }
+  .physical-docs-note__list, .physical-docs-note__contact { font-size: 17px; }
+}
 </style>

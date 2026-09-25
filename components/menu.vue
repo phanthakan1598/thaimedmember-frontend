@@ -373,7 +373,7 @@ export default {
         { title: 'ขอขึ้นทะเบียนใบอนุญาต', path: '/request/license', icon: 'mdi-license' },
         { title: 'หนังสือรับรองการขึ้นทะเบียนรับใบอนุญาตเป็นผู้ประกอบวิชาชีพการแพทย์แผนไทย หรือการแพทย์แผนไทยประยุกต์', path: '/request/certificate', icon: 'mdi-certificate-outline' },
         { title: 'ขอใบแทนใบอนุญาต (กรณีชำรุด, สูญหาย)', path: '/request/replacement', icon: 'mdi-file-replace-outline' },
-        { title: 'ขอใบแปลใบอนุญาต', path: '/request/translation', icon: 'mdi-translate' },
+        { title: 'ขอแปลใบอนุญาต', path: '/request/translation', icon: 'mdi-translate' },
         { title: 'ขอเปลี่ยนข้อมูล', path: '/request/edit', icon: 'mdi-account-edit-outline' },
         { title: 'ต่ออายุบัตรสมาชิก / ขอบัตรสมาชิก', path: '/request/renew', icon: 'mdi-card-account-details-star-outline' }
       ]

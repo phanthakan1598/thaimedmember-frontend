@@ -130,7 +130,7 @@
     <v-row>
       <v-col cols="12">
         <span class="section-heading">วิธีการรับหนังสือรับรอง <span class="red--text">*</span></span><v-radio-group v-model="form.documentDeliveryMethod" :error-messages="errors.delivery">
-          <v-radio label="จัดส่งทางไปรษณีย์ (ค่าธรรมเนียม 100 บาท)" value="postal" /><v-radio label="รับด้วยตนเองที่สภาการแพทย์แผนไทย" value="self_pickup" />
+          <v-radio label="จัดส่งทางไปรษณีย์ (ค่าธรรมเนียม 100 บาท)" value="postal" /><v-radio label="จัดส่งเป็นไฟล์ทาง E-mail" value="self_pickup" />
         </v-radio-group>
       </v-col>
     </v-row>
@@ -189,7 +189,7 @@ const professionLabels = {
   thai_midwifery: 'วิชาชีพการแพทย์แผนไทย ด้านผดุงครรภ์ไทย',
   thai_massage: 'วิชาชีพการแพทย์แผนไทย ด้านนวดไทย',
   folk_medicine: 'วิชาชีพการแพทย์แผนไทย ด้านแพทย์พื้นบ้าน',
-  thai_applied: 'วิชาชีพการแพทย์แผนไทยประยุกต์'
+  thai_applied: 'วิชาชีพการแพทย์แผนไทย ด้านประยุกต์'
 }
 
 export default {

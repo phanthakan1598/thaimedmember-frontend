@@ -67,6 +67,29 @@
         </v-card>
       </v-col>
     </v-row>
+
+    <v-row>
+      <v-col cols="12">
+        <v-card outlined class="pa-4 physical-docs-note">
+          <div class="physical-docs-note__title">
+            <v-icon color="#327531" class="mr-2">mdi-information-outline</v-icon>
+            เอกสารที่ต้องจัดส่งตัวจริงมายังสภาการแพทย์แผนไทย
+          </div>
+          <ul class="physical-docs-note__list">
+            <li>ใบคำร้องขอต่ออายุบัตรสมาชิก/ขอบัตรสมาชิก จำนวน 1 ฉบับ</li>
+            <li>สำเนาบัตรประชาชน (รับรองสำเนาถูกต้อง) จำนวน 1 ฉบับ</li>
+            <li>สำเนาใบประกอบวิชาชีพ (รับรองสำเนาถูกต้อง) จำนวน 1 ฉบับ</li>
+            <li>บัตรสมาชิกตัวจริง (กรณีบัตรสูญหาย ให้แนบใบแจ้งความมาเป็นหลักฐาน)</li>
+            <li>รูปถ่าย ขนาด 1 นิ้ว จำนวน 2 รูป (ภาพสี แต่งกายชุดข้าราชการหรือชุดสุภาพ หน้าตรง ครึ่งตัว ท่าปกติ ไม่สวมหมวก ไม่สวมแว่นตาดำ และถ่ายไว้ไม่เกิน 6 เดือน)</li>
+            <li>สำเนาหลักฐานการชำระค่าธรรมเนียม</li>
+            <li>เอกสารอื่นๆ ตามกรณี (สำเนาทะเบียนบ้านหรือหลักฐานแสดงถิ่นที่อยู่ กรณีเปลี่ยนที่อยู่ติดต่อ / สำเนาหนังสือสำคัญการได้รับอนุมัติให้เปลี่ยนคำนำหน้า หรือยศ กรณีแก้ไขยศ)</li>
+          </ul>
+          <div class="physical-docs-note__contact">
+            หากมีข้อสงสัย ติดต่อ 025-801-157 ต่อ 16
+          </div>
+        </v-card>
+      </v-col>
+    </v-row>
     <v-divider class="my-6" />
     <v-row>
       <v-col cols="12">
@@ -124,7 +147,7 @@ const evidenceItems = [
 export default {
   name: 'RequestRenewForm',
   props: { value: { type: Object, required: true } },
-  data () { return { form: { reason: '', lostDate: '', documentDeliveryMethod: this.value.documentDeliveryMethod || '', evidences: Object.fromEntries(evidenceItems.map(item => [item.value, { status: false, file: null }])) }, reasonItems: [{ value: 'new_card', label: 'ทำบัตรใหม่' }, { value: 'expired', label: 'บัตรเดิมหมดอายุ' }, { value: 'damaged', label: 'ชำรุด' }, { value: 'lost', label: 'สูญหาย' }], errors: {} } },
+  data () { return { form: { reason: '', lostDate: '', documentDeliveryMethod: this.value.documentDeliveryMethod || '', evidences: Object.fromEntries(evidenceItems.map(item => [item.value, { status: false, file: null }])) }, reasonItems: [{ value: 'new_card', label: 'ทำบัตรใหม่ (สำหรับสมาชิกที่เคยขึ้นทะเบียนแล้ว แต่ยังไม่ได้รับบัตรสมาชิก)' }, { value: 'expired', label: 'บัตรเดิมหมดอายุ' }, { value: 'damaged', label: 'ชำรุด' }, { value: 'lost', label: 'สูญหาย' }], errors: {} } },
   computed: {
     visibleEvidenceItems () { return evidenceItems.filter(item => !item.reasons.length || item.reasons.includes(this.form.reason)) },
     deliveryFee () { return this.form.documentDeliveryMethod === 'postal' ? 100 : 0 },
@@ -159,5 +182,13 @@ export default {
 .fee-summary { font-size: 20px; }
 .total-price { color: #327531; font-size: 24px; font-weight: bold; }
 .form-actions { gap: 12px; }
-@media screen and (max-width: 600px) { .section-heading { font-size: 21px; } }
+.physical-docs-note { border-color: #327531 !important; }
+.physical-docs-note__title { display: flex; align-items: center; margin-bottom: 10px; color: #327531; font-size: 22px; font-weight: bold; }
+.physical-docs-note__list { margin: 0 0 10px; padding-left: 22px; color: #424242; font-size: 19px; line-height: 1.6; }
+.physical-docs-note__contact { color: #424242; font-size: 19px; font-weight: bold; }
+@media screen and (max-width: 600px) {
+  .section-heading { font-size: 21px; }
+  .physical-docs-note__title { font-size: 20px; }
+  .physical-docs-note__list, .physical-docs-note__contact { font-size: 17px; }
+}
 </style>
