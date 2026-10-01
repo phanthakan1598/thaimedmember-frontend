@@ -22,12 +22,44 @@
           v-if="isLoggedIn"
           class="user-area"
         >
-          <div class="user-name">
-            <v-icon color="white" class="mr-1">
-              mdi-account-circle
-            </v-icon>
-            <span>{{ displayName }}</span>
-          </div>
+          <v-menu
+            v-model="userMenu"
+            offset-y
+            transition="slide-y-transition"
+            min-width="190"
+          >
+            <template #activator="{ on, attrs }">
+              <div
+                class="user-name user-dropdown-activator"
+                v-bind="attrs"
+                v-on="on"
+              >
+                <v-icon color="white" class="mr-1">
+                  mdi-account-circle
+                </v-icon>
+                <span>{{ displayName }}</span>
+                <v-icon color="white" small class="ml-1 dropdown-arrow" :class="{ 'rotate-180': userMenu }">
+                  mdi-chevron-down
+                </v-icon>
+              </div>
+            </template>
+
+            <v-list dense class="py-1">
+              <v-list-item @click="openEditProfile">
+                <v-list-item-icon class="mr-2">
+                  <v-icon color="#327531">
+                    mdi-account-edit
+                  </v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title class="user-menu-item-text">
+                    แก้ไขข้อมูลส่วนตัว
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+
           <v-btn
             text
             dark
@@ -49,6 +81,12 @@
 export default {
   name: 'HeaderPage',
 
+  data () {
+    return {
+      userMenu: false
+    }
+  },
+
   computed: {
     user () {
       return this.$store.state.user
@@ -62,6 +100,12 @@ export default {
   },
 
   methods: {
+    openEditProfile () {
+      this.userMenu = false
+      if (this.$route.path !== '/profile') {
+        this.$router.push('/profile')
+      }
+    },
     logout () {
       localStorage.removeItem('accessTokenUser')
       this.$axios.setToken(false)
@@ -113,6 +157,26 @@ export default {
   min-width: 0;
   padding: 6px 10px;
   white-space: nowrap;
+}
+.user-dropdown-activator {
+  cursor: pointer;
+  user-select: none;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+.user-dropdown-activator:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+.dropdown-arrow {
+  transition: transform 0.2s ease;
+}
+.rotate-180 {
+  transform: rotate(180deg);
+}
+.user-menu-item-text {
+  color: #333;
+  font-size: 15px;
+  font-weight: 500;
 }
 .user-name span { overflow: hidden; text-overflow: ellipsis; }
 .logout-button {

@@ -5,8 +5,10 @@ const environment = {
     // api: 'https://adminksp2569-1.thaijobjob.com/uat/api/admin',
     // api: 'https://adminksp2568-2.thaijobjob.com/api/admin',
     // api: 'https://adminkspsubjects2568.thaijobjob.com/api/admin',
-    api: 'http://localhost:8002/api/uat',
+    // api: 'http://localhost:8002/api/uat',
+    api: 'http://localhost:8002/api',
     // api: 'http://192.168.254.46:20002/api/admin',
+    // api: 'https://uat-thaimed.thaijobjob.com/api',
     s3BaseR1: 'https://uat-ksp67-2.thaijobjob.com/api/s3',
     s3BaseR2: 'https://uat-ksp67-2.thaijobjob.com/api/s3'
     // api: 'https://adminksp662.thaijobjob.com/api/admin',
@@ -88,14 +90,14 @@ export default {
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
     // Workaround to avoid enforcing hard-coded localhost:3000: https://github.com/nuxt-community/axios-module/issues/308
-    baseURL: environment[process.env.NODE_ENV].api
+    baseURL: (environment[process.env.NODE_ENV] || environment.development).api
   },
   env: {
-    NODE_ENV: process.env.NODE_ENV,
-    API_REGISTER_CHECKREGISTER: environment[process.env.NODE_ENV].api + '/register/checkregister',
+    NODE_ENV: process.env.NODE_ENV || 'development',
+    API_REGISTER_CHECKREGISTER: (environment[process.env.NODE_ENV] || environment.development).api + '/register/checkregister',
 
-    BASE_ROUND1: environment[process.env.NODE_ENV].s3BaseR1,
-    BASE_ROUND2: environment[process.env.NODE_ENV].s3BaseR2
+    BASE_ROUND1: (environment[process.env.NODE_ENV] || environment.development).s3BaseR1,
+    BASE_ROUND2: (environment[process.env.NODE_ENV] || environment.development).s3BaseR2
   },
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
   vuetify: {
