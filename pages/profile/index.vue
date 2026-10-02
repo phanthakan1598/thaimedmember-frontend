@@ -51,11 +51,11 @@
           icon="mdi-clock-alert-outline"
           class="mb-4"
         >
-          <div class="font-weight-bold">
+          <div class="font-weight-bold" style="font-size: 16px;">
             {{ pendingMessage || 'มีคำขอแก้ไขรอตรวจสอบอยู่' }}
           </div>
-          <div class="text-caption mt-1">
-            ท่านได้ส่งคำขอแก้ไขข้อมูลไว้แล้วและอยู่ระหว่างรอเจ้าหน้าที่ตรวจสอบ หากส่งข้อมูลใหม่อีกครั้ง ระบบจะอัปเดตคำขอเดิมที่รอตรวจสอบ
+          <div class="text-caption mt-1" style="font-size: 14px;">
+            ท่านได้ส่งคำขอแก้ไขข้อมูลไว้แล้วและอยู่ระหว่างรอเจ้าหน้าที่ตรวจสอบ (รายการที่มีการยื่นแก้ไขจะแสดงแถบสีเขียวระบุข้อมูลที่ขอแก้ไขไว้ใต้ช่องข้อมูลเดิม)
           </div>
         </v-alert>
 
@@ -79,6 +79,8 @@
                 <EditProfilePersonal
                   v-model="form"
                   :initial-form="initialForm"
+                  :pending-fields="pendingEditedFields"
+                  :pending-image-url="pendingProfileData ? pendingProfileData.profileImageUrl : null"
                 />
 
                 <v-divider class="my-6" />
@@ -87,6 +89,7 @@
                 <EditProfileAddress
                   v-model="form"
                   :initial-form="initialForm"
+                  :pending-fields="pendingEditedFields"
                   :geo-provinces="geoProvinces"
                   :geo-districts="geoDistricts"
                   :geo-subdistricts="geoSubdistricts"
@@ -168,12 +171,12 @@
                 icon="mdi-alert-circle"
                 class="mb-4 phone-dialog-alert"
               >
-                <div class="font-weight-bold" style="font-size: 18px; color: #b75300;">
+                <div class="font-weight-bold" style="font-size: 22px; color: #b75300;">
                   แจ้งเตือนสำคัญเกี่ยวกับการเปลี่ยนเบอร์โทรศัพท์มือถือ
                 </div>
-                <div class="mt-1" style="color: #424242; font-size: 18px;">
-                  เนื่องจากเบอร์โทรศัพท์มือถือใช้สำหรับเข้าสู่ระบบ (Login) หากบันทึกข้อมูลแล้ว ในการเข้าสู่ระบบครั้งถัดไปจะต้องใช้เบอร์โทรศัพท์ใหม่
-                  (<strong style="color: #b75300;">{{ changedMobileNumber }}</strong>) ร่วมกับเลขบัตรประชาชนในการเข้าสู่ระบบ
+                <div class="mt-1" style="color: #424242; font-size: 20px;">
+                  เนื่องจากเบอร์โทรศัพท์มือถือใช้สำหรับเข้าสู่ระบบ Login หากบันทึกข้อมูลแล้ว ในการเข้าสู่ระบบครั้งถัดไปจะต้องใช้เบอร์โทรศัพท์ใหม่
+                  <strong style="color: #b75300;">{{ changedMobileNumber }}</strong> ร่วมกับเลขบัตรประชาชนในการเข้าสู่ระบบ
                 </div>
               </v-alert>
 
@@ -181,10 +184,10 @@
                 <template #default>
                   <thead>
                     <tr>
-                      <th class="text-center" style="width: 60px;">
+                      <th class="text-center" style="width: 70px;">
                         ลำดับ
                       </th>
-                      <th class="text-left" style="width: 220px;">
+                      <th class="text-left" style="width: 240px;">
                         รายการข้อมูล
                       </th>
                       <th class="text-left">
@@ -369,6 +372,10 @@ export default {
       isSaving: false,
       isLoadingGeo: false,
       isConfirmDialogOpen: false,
+      isPendingDetailsDialogOpen: false,
+      selectedDesign: 1,
+      isLoadingPending: false,
+      pendingProfileData: null,
       hasPendingApproval: false,
       pendingMessage: '',
       rawProfile: {},
@@ -455,6 +462,97 @@ export default {
     changedMobileNumber () {
       const field = this.pendingChangedFields.find(item => item.key === 'mobile')
       return field ? field.newValue : this.form.mobile
+    },
+    hasPendingProfileImage () {
+      return Boolean(this.pendingProfileData?.profileImageUrl || this.pendingProfileData?.editedFields?.profileImage)
+    },
+    pendingPersonalFields () {
+      if (!this.pendingProfileData?.editedFields) { return [] }
+      const fields = this.pendingProfileData.editedFields
+      const personalKeys = [
+        'name1Th', 'nameRankTh', 'name2Th', 'name3Th', 'name2OldTh', 'name3OldTh',
+        'name1En', 'nameRankEn', 'name2En', 'name3En', 'name2OldEn', 'name3OldEn',
+        'mobile', 'email', 'idLine', 'nationality', 'ethnicity', 'religion', 'gender', 'birthDate'
+      ]
+      return personalKeys
+        .filter((key) => {
+          if (!Object.prototype.hasOwnProperty.call(fields, key)) { return false }
+          const val = fields[key]
+          const oldVal = this.getOriginalFieldValue(key)
+          if ((val === '' || val === null || val === undefined) && (!oldVal || oldVal === '-')) {
+            return false
+          }
+          if (String(val).trim() === String(oldVal || '').trim()) {
+            return false
+          }
+          const formattedVal = this.formatFieldValue(key, val)
+          if (formattedVal === '-' && (!oldVal || oldVal === '-')) {
+            return false
+          }
+          return true
+        })
+        .map(key => ({
+          key,
+          label: FIELD_LABELS[key] || key,
+          icon: this.getFieldIcon(key),
+          oldValue: this.formatFieldValue(key, this.getOriginalFieldValue(key)),
+          value: this.formatFieldValue(key, fields[key])
+        }))
+    },
+    pendingAddressFields () {
+      if (!this.pendingProfileData?.editedFields) { return [] }
+      const fields = this.pendingProfileData.editedFields
+      const addressKeys = [
+        'address', 'moo', 'building', 'soi', 'road', 'province', 'district', 'subdistrict', 'zipcode', 'phone',
+        'checkboxAddressContact', 'addressContact', 'mooContact', 'buildingContact', 'soiContact', 'roadContact',
+        'provinceContact', 'districtContact', 'subdistrictContact', 'zipcodeContact', 'phoneContact',
+        'checkboxAddressDocument', 'addressDocument', 'mooDocument', 'buildingDocument', 'soiDocument', 'roadDocument',
+        'provinceDocument', 'districtDocument', 'subdistrictDocument', 'zipcodeDocument', 'phoneDocument'
+      ]
+      return addressKeys
+        .filter((key) => {
+          if (!Object.prototype.hasOwnProperty.call(fields, key)) { return false }
+          const val = fields[key]
+          const oldVal = this.getOriginalFieldValue(key)
+          if ((val === '' || val === null || val === undefined) && (!oldVal || oldVal === '-')) {
+            return false
+          }
+          if (String(val).trim() === String(oldVal || '').trim()) {
+            return false
+          }
+          const formattedVal = this.formatFieldValue(key, val)
+          if (formattedVal === '-' && (!oldVal || oldVal === '-')) {
+            return false
+          }
+          return true
+        })
+        .map(key => ({
+          key,
+          label: FIELD_LABELS[key] || key,
+          icon: this.getFieldIcon(key),
+          oldValue: this.formatFieldValue(key, this.getOriginalFieldValue(key)),
+          value: this.formatFieldValue(key, fields[key])
+        }))
+    },
+    allPendingChangedFields () {
+      return [...this.pendingPersonalFields, ...this.pendingAddressFields]
+    },
+    pendingEditedFields () {
+      if (!this.pendingProfileData?.editedFields) { return {} }
+      const fields = this.pendingProfileData.editedFields
+      const filtered = {}
+      Object.keys(fields).forEach((key) => {
+        const val = fields[key]
+        const oldVal = this.getOriginalFieldValue(key)
+        if ((val === '' || val === null || val === undefined) && (!oldVal || oldVal === '-')) {
+          return
+        }
+        if (String(val).trim() === String(oldVal || '').trim()) {
+          return
+        }
+        filtered[key] = val
+      })
+      return filtered
     }
   },
 
@@ -481,6 +579,95 @@ export default {
   },
 
   methods: {
+    formatDateTimeDisplay (dateVal) {
+      if (!dateVal) { return '-' }
+      try {
+        const d = new Date(dateVal)
+        if (isNaN(d.getTime())) { return dateVal }
+        const day = String(d.getDate()).padStart(2, '0')
+        const month = String(d.getMonth() + 1).padStart(2, '0')
+        const year = d.getFullYear() + 543
+        const hours = String(d.getHours()).padStart(2, '0')
+        const mins = String(d.getMinutes()).padStart(2, '0')
+        return `${day}/${month}/${year} เวลา ${hours}:${mins} น.`
+      } catch (e) {
+        return dateVal
+      }
+    },
+
+    formatFieldValue (key, val) {
+      if (val === null || val === undefined || val === '') {
+        return '-'
+      }
+      if (key.startsWith('checkboxAddress')) {
+        return val ? 'ใช้ตามทะเบียนบ้าน' : 'ระบุที่อยู่แยก'
+      }
+      if (key === 'birthDate') {
+        return this.formatBirthDateDisplay(val)
+      }
+      return String(val)
+    },
+
+    getOriginalFieldValue (key) {
+      if (this.initialForm && this.initialForm[key] !== undefined && this.initialForm[key] !== null) {
+        return this.initialForm[key]
+      }
+      if (this.rawProfile && this.rawProfile[key] !== undefined && this.rawProfile[key] !== null) {
+        return this.rawProfile[key]
+      }
+      return ''
+    },
+
+    getFieldIcon (key) {
+      if (key === 'mobile' || key === 'phone' || key.includes('phone') || key.includes('Phone')) {
+        return 'mdi-cellphone'
+      }
+      if (key === 'email') { return 'mdi-email-outline' }
+      if (key === 'idLine') { return 'mdi-chat-outline' }
+      if (key === 'birthDate') { return 'mdi-cake-variant-outline' }
+      if (key === 'gender') { return 'mdi-gender-male-female' }
+      if (key.includes('address') || key.includes('Address') || key.includes('province') || key.includes('district') || key.includes('zipcode') || key.includes('road') || key.includes('soi') || key.includes('moo')) {
+        return 'mdi-map-marker-outline'
+      }
+      return 'mdi-account-outline'
+    },
+
+    async fetchPendingProfile () {
+      try {
+        const res = await this.$axios.$get('/applicant/getProfileChanges')
+        if (res?.result && (res.result.hasPending || (res.result.changes && res.result.changes.length > 0))) {
+          this.hasPendingApproval = true
+          if (!this.pendingMessage) {
+            this.pendingMessage = 'มีคำขอแก้ไขรอตรวจสอบอยู่'
+          }
+          const changes = res.result.changes || []
+          const editedFields = {}
+          let pendingImageUrl = null
+          changes.forEach((item) => {
+            if (item.field === 'profileImage') {
+              pendingImageUrl = item.newValue
+              editedFields.profileImage = item.newValue
+            } else {
+              editedFields[item.field] = item.newValue
+            }
+          })
+          this.pendingProfileData = {
+            hasPending: Boolean(res.result.hasPending),
+            status: res.result.status || 'pending',
+            changes,
+            editedFields,
+            profileImageUrl: pendingImageUrl
+          }
+        } else {
+          this.hasPendingApproval = false
+          this.pendingProfileData = null
+        }
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.warn('Cannot fetch pending profile changes from /applicant/getProfileChanges:', err)
+      }
+    },
+
     formatBirthDateDisplay (dateStr) {
       if (!dateStr) { return '-' }
       const parts = String(dateStr).split('-')
@@ -680,26 +867,27 @@ export default {
 
     applyData (data) {
       if (!data || typeof data !== 'object') { return }
+      const source = (data.details && typeof data.details === 'object') ? { ...data, ...data.details } : data
 
       // 1. Personal & General fields
       for (const spec of PERSONAL_FIELD_MAPPINGS) {
-        const val = this.extractValue([data], spec.keys, spec.transform)
+        const val = this.extractValue([source], spec.keys, spec.transform)
         if (val !== undefined) {
           this.form[spec.target] = val
         }
       }
 
       // 2. Address sections
-      this.applyAddressGroup(data, 'address', '')
-      this.applyAddressGroup(data, 'contactAddress', 'Contact')
-      this.applyAddressGroup(data, 'documentAddress', 'Document')
+      this.applyAddressGroup(source, 'address', '')
+      this.applyAddressGroup(source, 'contactAddress', 'Contact')
+      this.applyAddressGroup(source, 'documentAddress', 'Document')
 
       // 3. Checkbox flags
-      if (data.checkboxAddressContact !== undefined) {
-        this.form.checkboxAddressContact = Boolean(data.checkboxAddressContact)
+      if (source.checkboxAddressContact !== undefined) {
+        this.form.checkboxAddressContact = Boolean(source.checkboxAddressContact)
       }
-      if (data.checkboxAddressDocument !== undefined) {
-        this.form.checkboxAddressDocument = Boolean(data.checkboxAddressDocument)
+      if (source.checkboxAddressDocument !== undefined) {
+        this.form.checkboxAddressDocument = Boolean(source.checkboxAddressDocument)
       }
     },
 
@@ -710,7 +898,7 @@ export default {
       // 1. ตั้งค่าพื้นฐานจาก Store ก่อน
       this.form.idCard = currentUser.CustomerID || currentUser.username || customerData.CustomerID || ''
       this.form.profileImageUrl = currentUser.profileImage || null
-      this.form.mobile = currentUser.mobile || ''
+      this.form.mobile = String(currentUser.mobile || '').replace(/\D/g, '')
       this.form.email = currentUser.email || ''
 
       // 2. แยกชื่อ-นามสกุลจาก fullname ของผู้ใช้งานอย่างถูกต้อง
@@ -744,10 +932,13 @@ export default {
         try {
           const res = await this.$axios.$get('/applicant/getProfile')
           if (res?.result && typeof res.result === 'object') {
-            this.rawProfile = res.result
-            this.applyData(res.result)
-            if (res.result.profileImageUrl) {
-              this.form.profileImageUrl = res.result.profileImageUrl
+            const profileData = (res.result.details && typeof res.result.details === 'object')
+              ? { ...res.result, ...res.result.details }
+              : res.result
+            this.rawProfile = profileData
+            this.applyData(profileData)
+            if (res.result.profileImageUrl || profileData.profileImageUrl) {
+              this.form.profileImageUrl = res.result.profileImageUrl || profileData.profileImageUrl
             }
             fetchedFromNewApi = true
           }
@@ -755,6 +946,7 @@ export default {
             this.hasPendingApproval = true
             this.pendingMessage = res.message
           }
+          await this.fetchPendingProfile()
         } catch (err) {
           // eslint-disable-next-line no-console
           console.warn('Cannot fetch applicant profile from /applicant/getProfile:', err)
@@ -944,6 +1136,8 @@ export default {
         delete payload.sourceRequestId
         delete payload.createAt
         delete payload.updateAt
+        delete payload.details
+        delete payload.profileImageUrl
         delete payload.profileImageFile
         delete payload.idCard
         delete payload.checkboxAddressContact
@@ -1044,12 +1238,12 @@ export default {
 
 .confirm-dialog-title {
   background-color: #327531;
-  font-size: 22px;
+  font-size: 24px;
   font-weight: bold;
 }
 
 .info-dialog-alert {
-  font-size: 16px !important;
+  font-size: 20px !important;
 }
 
 .changes-table {
@@ -1060,13 +1254,13 @@ export default {
 .changes-table th {
   background-color: #f5f5f5 !important;
   color: #333 !important;
-  font-size: 17px !important;
+  font-size: 20px !important;
   font-weight: bold !important;
 }
 
 .changes-table td {
-  font-size: 16px;
-  padding: 12px 16px !important;
+  font-size: 20px;
+  padding: 14px 16px !important;
 }
 
 .old-value-cell {
@@ -1074,10 +1268,10 @@ export default {
 }
 
 .old-badge {
-  font-size: 13px;
+  font-size: 16px;
   background-color: #eeeeee;
   color: #616161;
-  padding: 2px 6px;
+  padding: 2px 8px;
   border-radius: 4px;
 }
 
@@ -1086,11 +1280,11 @@ export default {
 }
 
 .new-badge {
-  font-size: 13px;
+  font-size: 16px;
   background-color: #e8f5e9;
   color: #2e7d32;
   border: 1px solid #81c784;
-  padding: 2px 6px;
+  padding: 2px 8px;
   border-radius: 4px;
   font-weight: bold;
 }
@@ -1103,6 +1297,6 @@ export default {
 }
 
 .confirm-dialog-btn {
-  font-size: 17px !important;
+  font-size: 20px !important;
 }
 </style>

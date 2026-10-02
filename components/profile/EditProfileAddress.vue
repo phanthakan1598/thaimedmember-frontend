@@ -23,6 +23,14 @@
             :class="{ 'field-modified': isModified('address') }"
           />
         </validation-provider>
+        <div v-if="hasPending('address')" class="pending-field-box">
+          <v-icon small color="#14532d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
+          <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
+          <span class="pending-field-value">{{ getPendingDisplay('address') }}</span>
+          <span class="pending-field-tag ml-auto">รอตรวจสอบ</span>
+        </div>
       </v-col>
 
       <v-col cols="12" md="4" class="py-0">
@@ -37,6 +45,14 @@
           dense
           :class="{ 'field-modified': isModified('moo') }"
         />
+        <div v-if="hasPending('moo')" class="pending-field-box">
+          <v-icon small color="#14532d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
+          <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
+          <span class="pending-field-value">{{ getPendingDisplay('moo') }}</span>
+          <span class="pending-field-tag ml-auto">รอตรวจสอบ</span>
+        </div>
       </v-col>
 
       <v-col cols="12" md="4" class="py-0">
@@ -51,6 +67,14 @@
           dense
           :class="{ 'field-modified': isModified('building') }"
         />
+        <div v-if="hasPending('building')" class="pending-field-box">
+          <v-icon small color="#14532d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
+          <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
+          <span class="pending-field-value">{{ getPendingDisplay('building') }}</span>
+          <span class="pending-field-tag ml-auto">รอตรวจสอบ</span>
+        </div>
       </v-col>
 
       <v-col cols="12" md="4" class="py-0">
@@ -65,6 +89,14 @@
           dense
           :class="{ 'field-modified': isModified('soi') }"
         />
+        <div v-if="hasPending('soi')" class="pending-field-box">
+          <v-icon small color="#14532d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
+          <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
+          <span class="pending-field-value">{{ getPendingDisplay('soi') }}</span>
+          <span class="pending-field-tag ml-auto">รอตรวจสอบ</span>
+        </div>
       </v-col>
 
       <v-col cols="12" md="4" class="py-0">
@@ -79,6 +111,14 @@
           dense
           :class="{ 'field-modified': isModified('road') }"
         />
+        <div v-if="hasPending('road')" class="pending-field-box">
+          <v-icon small color="#14532d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
+          <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
+          <span class="pending-field-value">{{ getPendingDisplay('road') }}</span>
+          <span class="pending-field-tag ml-auto">รอตรวจสอบ</span>
+        </div>
       </v-col>
 
       <v-col cols="12" md="4" class="py-0">
@@ -99,6 +139,14 @@
             @change="onProvinceChange"
           />
         </validation-provider>
+        <div v-if="hasPending('province')" class="pending-field-box">
+          <v-icon small color="#14532d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
+          <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
+          <span class="pending-field-value">{{ getPendingDisplay('province') }}</span>
+          <span class="pending-field-tag ml-auto">รอตรวจสอบ</span>
+        </div>
       </v-col>
 
       <v-col cols="12" md="4" class="py-0">
@@ -119,6 +167,14 @@
             @change="onDistrictChange"
           />
         </validation-provider>
+        <div v-if="hasPending('district')" class="pending-field-box">
+          <v-icon small color="#14532d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
+          <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
+          <span class="pending-field-value">{{ getPendingDisplay('district') }}</span>
+          <span class="pending-field-tag ml-auto">รอตรวจสอบ</span>
+        </div>
       </v-col>
 
       <v-col cols="12" md="4" class="py-0">
@@ -139,6 +195,14 @@
             @change="onSubdistrictChange"
           />
         </validation-provider>
+        <div v-if="hasPending('subdistrict')" class="pending-field-box">
+          <v-icon small color="#14532d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
+          <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
+          <span class="pending-field-value">{{ getPendingDisplay('subdistrict') }}</span>
+          <span class="pending-field-tag ml-auto">รอตรวจสอบ</span>
+        </div>
       </v-col>
 
       <v-col cols="12" md="4" class="py-0">
@@ -158,6 +222,14 @@
             :class="{ 'field-modified': isModified('zipcode') }"
           />
         </validation-provider>
+        <div v-if="hasPending('zipcode')" class="pending-field-box">
+          <v-icon small color="#14532d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
+          <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
+          <span class="pending-field-value">{{ getPendingDisplay('zipcode') }}</span>
+          <span class="pending-field-tag ml-auto">รอตรวจสอบ</span>
+        </div>
       </v-col>
 
       <v-col cols="12" md="4" class="py-0">
@@ -175,6 +247,14 @@
             :class="{ 'field-modified': isModified('phone') }"
           />
         </validation-provider>
+        <div v-if="hasPending('phone')" class="pending-field-box">
+          <v-icon small color="#14532d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
+          <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
+          <span class="pending-field-value">{{ getPendingDisplay('phone') }}</span>
+          <span class="pending-field-tag ml-auto">รอตรวจสอบ</span>
+        </div>
       </v-col>
     </v-row>
 
@@ -194,6 +274,14 @@
           @change="toggleAddressContact"
         />
         <span v-if="isModified('checkboxAddressContact')" class="modified-badge">มีการแก้ไข</span>
+        <div v-if="hasPending('checkboxAddressContact')" class="pending-field-box ml-2 my-0">
+          <v-icon small color="#14532d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
+          <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
+          <span class="pending-field-value">{{ getPendingDisplay('checkboxAddressContact') }}</span>
+          <span class="pending-field-tag ml-2">รอตรวจสอบ</span>
+        </div>
       </v-col>
 
       <v-col cols="12" md="4" class="py-0">
@@ -212,6 +300,14 @@
             :class="{ 'field-modified': isModified('addressContact') }"
           />
         </validation-provider>
+        <div v-if="hasPending('addressContact')" class="pending-field-box">
+          <v-icon small color="#14532d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
+          <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
+          <span class="pending-field-value">{{ getPendingDisplay('addressContact') }}</span>
+          <span class="pending-field-tag ml-auto">รอตรวจสอบ</span>
+        </div>
       </v-col>
 
       <v-col cols="12" md="4" class="py-0">
@@ -227,6 +323,14 @@
           dense
           :class="{ 'field-modified': isModified('mooContact') }"
         />
+        <div v-if="hasPending('mooContact')" class="pending-field-box">
+          <v-icon small color="#14532d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
+          <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
+          <span class="pending-field-value">{{ getPendingDisplay('mooContact') }}</span>
+          <span class="pending-field-tag ml-auto">รอตรวจสอบ</span>
+        </div>
       </v-col>
 
       <v-col cols="12" md="4" class="py-0">
@@ -242,6 +346,14 @@
           dense
           :class="{ 'field-modified': isModified('buildingContact') }"
         />
+        <div v-if="hasPending('buildingContact')" class="pending-field-box">
+          <v-icon small color="#14532d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
+          <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
+          <span class="pending-field-value">{{ getPendingDisplay('buildingContact') }}</span>
+          <span class="pending-field-tag ml-auto">รอตรวจสอบ</span>
+        </div>
       </v-col>
 
       <v-col cols="12" md="4" class="py-0">
@@ -257,6 +369,14 @@
           dense
           :class="{ 'field-modified': isModified('soiContact') }"
         />
+        <div v-if="hasPending('soiContact')" class="pending-field-box">
+          <v-icon small color="#14532d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
+          <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
+          <span class="pending-field-value">{{ getPendingDisplay('soiContact') }}</span>
+          <span class="pending-field-tag ml-auto">รอตรวจสอบ</span>
+        </div>
       </v-col>
 
       <v-col cols="12" md="4" class="py-0">
@@ -272,6 +392,14 @@
           dense
           :class="{ 'field-modified': isModified('roadContact') }"
         />
+        <div v-if="hasPending('roadContact')" class="pending-field-box">
+          <v-icon small color="#14532d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
+          <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
+          <span class="pending-field-value">{{ getPendingDisplay('roadContact') }}</span>
+          <span class="pending-field-tag ml-auto">รอตรวจสอบ</span>
+        </div>
       </v-col>
 
       <v-col cols="12" md="4" class="py-0">
@@ -293,6 +421,14 @@
             @change="onProvinceContactChange"
           />
         </validation-provider>
+        <div v-if="hasPending('provinceContact')" class="pending-field-box">
+          <v-icon small color="#14532d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
+          <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
+          <span class="pending-field-value">{{ getPendingDisplay('provinceContact') }}</span>
+          <span class="pending-field-tag ml-auto">รอตรวจสอบ</span>
+        </div>
       </v-col>
 
       <v-col cols="12" md="4" class="py-0">
@@ -313,6 +449,14 @@
             @change="onDistrictContactChange"
           />
         </validation-provider>
+        <div v-if="hasPending('districtContact')" class="pending-field-box">
+          <v-icon small color="#14532d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
+          <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
+          <span class="pending-field-value">{{ getPendingDisplay('districtContact') }}</span>
+          <span class="pending-field-tag ml-auto">รอตรวจสอบ</span>
+        </div>
       </v-col>
 
       <v-col cols="12" md="4" class="py-0">
@@ -333,6 +477,14 @@
             @change="onSubdistrictContactChange"
           />
         </validation-provider>
+        <div v-if="hasPending('subdistrictContact')" class="pending-field-box">
+          <v-icon small color="#14532d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
+          <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
+          <span class="pending-field-value">{{ getPendingDisplay('subdistrictContact') }}</span>
+          <span class="pending-field-tag ml-auto">รอตรวจสอบ</span>
+        </div>
       </v-col>
 
       <v-col cols="12" md="4" class="py-0">
@@ -352,6 +504,14 @@
             :class="{ 'field-modified': isModified('zipcodeContact') }"
           />
         </validation-provider>
+        <div v-if="hasPending('zipcodeContact')" class="pending-field-box">
+          <v-icon small color="#14532d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
+          <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
+          <span class="pending-field-value">{{ getPendingDisplay('zipcodeContact') }}</span>
+          <span class="pending-field-tag ml-auto">รอตรวจสอบ</span>
+        </div>
       </v-col>
 
       <v-col cols="12" md="4" class="py-0">
@@ -370,6 +530,14 @@
             :class="{ 'field-modified': isModified('phoneContact') }"
           />
         </validation-provider>
+        <div v-if="hasPending('phoneContact')" class="pending-field-box">
+          <v-icon small color="#14532d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
+          <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
+          <span class="pending-field-value">{{ getPendingDisplay('phoneContact') }}</span>
+          <span class="pending-field-tag ml-auto">รอตรวจสอบ</span>
+        </div>
       </v-col>
     </v-row>
 
@@ -389,6 +557,14 @@
           @change="toggleAddressDocument"
         />
         <span v-if="isModified('checkboxAddressDocument')" class="modified-badge">มีการแก้ไข</span>
+        <div v-if="hasPending('checkboxAddressDocument')" class="pending-field-box ml-2 my-0">
+          <v-icon small color="#14532d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
+          <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
+          <span class="pending-field-value">{{ getPendingDisplay('checkboxAddressDocument') }}</span>
+          <span class="pending-field-tag ml-2">รอตรวจสอบ</span>
+        </div>
       </v-col>
 
       <v-col cols="12" md="4" class="py-0">
@@ -407,6 +583,14 @@
             :class="{ 'field-modified': isModified('addressDocument') }"
           />
         </validation-provider>
+        <div v-if="hasPending('addressDocument')" class="pending-field-box">
+          <v-icon small color="#14532d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
+          <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
+          <span class="pending-field-value">{{ getPendingDisplay('addressDocument') }}</span>
+          <span class="pending-field-tag ml-auto">รอตรวจสอบ</span>
+        </div>
       </v-col>
 
       <v-col cols="12" md="4" class="py-0">
@@ -422,6 +606,14 @@
           dense
           :class="{ 'field-modified': isModified('mooDocument') }"
         />
+        <div v-if="hasPending('mooDocument')" class="pending-field-box">
+          <v-icon small color="#14532d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
+          <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
+          <span class="pending-field-value">{{ getPendingDisplay('mooDocument') }}</span>
+          <span class="pending-field-tag ml-auto">รอตรวจสอบ</span>
+        </div>
       </v-col>
 
       <v-col cols="12" md="4" class="py-0">
@@ -437,6 +629,14 @@
           dense
           :class="{ 'field-modified': isModified('buildingDocument') }"
         />
+        <div v-if="hasPending('buildingDocument')" class="pending-field-box">
+          <v-icon small color="#14532d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
+          <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
+          <span class="pending-field-value">{{ getPendingDisplay('buildingDocument') }}</span>
+          <span class="pending-field-tag ml-auto">รอตรวจสอบ</span>
+        </div>
       </v-col>
 
       <v-col cols="12" md="4" class="py-0">
@@ -452,6 +652,14 @@
           dense
           :class="{ 'field-modified': isModified('soiDocument') }"
         />
+        <div v-if="hasPending('soiDocument')" class="pending-field-box">
+          <v-icon small color="#14532d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
+          <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
+          <span class="pending-field-value">{{ getPendingDisplay('soiDocument') }}</span>
+          <span class="pending-field-tag ml-auto">รอตรวจสอบ</span>
+        </div>
       </v-col>
 
       <v-col cols="12" md="4" class="py-0">
@@ -467,6 +675,14 @@
           dense
           :class="{ 'field-modified': isModified('roadDocument') }"
         />
+        <div v-if="hasPending('roadDocument')" class="pending-field-box">
+          <v-icon small color="#14532d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
+          <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
+          <span class="pending-field-value">{{ getPendingDisplay('roadDocument') }}</span>
+          <span class="pending-field-tag ml-auto">รอตรวจสอบ</span>
+        </div>
       </v-col>
 
       <v-col cols="12" md="4" class="py-0">
@@ -488,6 +704,14 @@
             @change="onProvinceDocumentChange"
           />
         </validation-provider>
+        <div v-if="hasPending('provinceDocument')" class="pending-field-box">
+          <v-icon small color="#14532d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
+          <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
+          <span class="pending-field-value">{{ getPendingDisplay('provinceDocument') }}</span>
+          <span class="pending-field-tag ml-auto">รอตรวจสอบ</span>
+        </div>
       </v-col>
 
       <v-col cols="12" md="4" class="py-0">
@@ -508,6 +732,14 @@
             @change="onDistrictDocumentChange"
           />
         </validation-provider>
+        <div v-if="hasPending('districtDocument')" class="pending-field-box">
+          <v-icon small color="#14532d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
+          <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
+          <span class="pending-field-value">{{ getPendingDisplay('districtDocument') }}</span>
+          <span class="pending-field-tag ml-auto">รอตรวจสอบ</span>
+        </div>
       </v-col>
 
       <v-col cols="12" md="4" class="py-0">
@@ -528,6 +760,14 @@
             @change="onSubdistrictDocumentChange"
           />
         </validation-provider>
+        <div v-if="hasPending('subdistrictDocument')" class="pending-field-box">
+          <v-icon small color="#14532d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
+          <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
+          <span class="pending-field-value">{{ getPendingDisplay('subdistrictDocument') }}</span>
+          <span class="pending-field-tag ml-auto">รอตรวจสอบ</span>
+        </div>
       </v-col>
 
       <v-col cols="12" md="4" class="py-0">
@@ -547,6 +787,14 @@
             :class="{ 'field-modified': isModified('zipcodeDocument') }"
           />
         </validation-provider>
+        <div v-if="hasPending('zipcodeDocument')" class="pending-field-box">
+          <v-icon small color="#14532d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
+          <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
+          <span class="pending-field-value">{{ getPendingDisplay('zipcodeDocument') }}</span>
+          <span class="pending-field-tag ml-auto">รอตรวจสอบ</span>
+        </div>
       </v-col>
 
       <v-col cols="12" md="4" class="py-0">
@@ -565,6 +813,12 @@
             :class="{ 'field-modified': isModified('phoneDocument') }"
           />
         </validation-provider>
+        <div v-if="hasPending('phoneDocument')" class="pending-field-box">
+          <v-icon small color="#15803d" class="mr-1">mdi-clock-outline</v-icon>
+          <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
+          <span class="pending-field-value">{{ getPendingDisplay('phoneDocument') }}</span>
+          <span class="pending-field-tag ml-auto">รอตรวจสอบ</span>
+        </div>
       </v-col>
     </v-row>
   </div>
@@ -668,6 +922,10 @@ export default {
       default: () => ({})
     },
     initialForm: {
+      type: Object,
+      default: () => ({})
+    },
+    pendingFields: {
       type: Object,
       default: () => ({})
     },
@@ -1067,6 +1325,25 @@ export default {
           this.localForm.zipcodeDocument = String(sub.zipCode)
         }
       }
+    },
+
+    hasPending (key) {
+      if (!this.pendingFields || this.pendingFields[key] === undefined || this.pendingFields[key] === null) {
+        return false
+      }
+      if (typeof this.pendingFields[key] === 'string' && this.pendingFields[key].trim() === '') {
+        return false
+      }
+      return true
+    },
+
+    getPendingDisplay (key) {
+      if (!this.hasPending(key)) { return '' }
+      const val = this.pendingFields[key]
+      if (key.startsWith('checkboxAddress')) {
+        return val ? 'ใช้ตามทะเบียนบ้าน' : 'ระบุที่อยู่แยก'
+      }
+      return String(val)
     }
   }
 }
@@ -1095,5 +1372,46 @@ export default {
   border: 2px solid #2e7d32 !important;
   background-color: #f1f8e9 !important;
   transition: all 0.3s ease;
+}
+
+.pending-field-box {
+  background-color: #ecfdf5;
+  border: 1.5px solid #86efac;
+  border-left: 4px solid #16a34a;
+  border-radius: 6px;
+  padding: 6px 12px;
+  margin-top: -12px;
+  margin-bottom: 14px;
+  font-size: 16px !important;
+  color: #14532d;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  line-height: 1.5;
+}
+
+.pending-field-label {
+  color: #14532d;
+  font-weight: 600;
+  margin-right: 6px;
+  font-size: 16px !important;
+}
+
+.pending-field-value {
+  color: #dc2626;
+  font-weight: 800;
+  word-break: break-word;
+  font-size: 16px !important;
+}
+
+.pending-field-tag {
+  background-color: #dcfce7;
+  color: #14532d;
+  font-size: 16px !important;
+  padding: 1px 10px;
+  border-radius: 4px;
+  font-weight: 700;
+  white-space: nowrap;
+  border: 1px solid #86efac;
 }
 </style>

@@ -17,6 +17,21 @@
             @change="handleImageChange"
           />
         </div>
+        <div v-if="pendingImageUrl" class="pending-image-box mt-3">
+          <div class="d-flex align-center">
+            <v-icon small color="#14532d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
+            <span class="pending-field-label">รูปที่ขอเปลี่ยน:</span>
+            <span class="pending-field-tag ml-2">รอตรวจสอบ</span>
+          </div>
+          <div class="mt-2 d-flex align-center justify-center">
+            <v-avatar size="56" class="mr-3" style="border: 2px solid #86efac;">
+              <v-img :src="pendingImageUrl" contain />
+            </v-avatar>
+            <span class="pending-field-value" style="font-size: 16px;">มีไฟล์รูปใหม่รอเจ้าหน้าที่อนุมัติ</span>
+          </div>
+        </div>
       </v-col>
     </v-row>
 
@@ -47,6 +62,14 @@
             :class="{ 'field-modified': isModified('name1Th') }"
           />
         </validation-provider>
+        <div v-if="hasPending('name1Th')" class="pending-field-box">
+          <v-icon small color="#14532d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
+          <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
+          <span class="pending-field-value">{{ getPendingDisplay('name1Th') }}</span>
+          <span class="pending-field-tag ml-auto">รอตรวจสอบ</span>
+        </div>
       </v-col>
 
       <v-col cols="12" md="6" class="py-0">
@@ -65,6 +88,14 @@
             :class="{ 'field-modified': isModified('nameRankTh') }"
           />
         </validation-provider>
+        <div v-if="hasPending('nameRankTh')" class="pending-field-box">
+          <v-icon small color="#14532d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
+          <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
+          <span class="pending-field-value">{{ getPendingDisplay('nameRankTh') }}</span>
+          <span class="pending-field-tag ml-auto">รอตรวจสอบ</span>
+        </div>
       </v-col>
 
       <v-col cols="12" md="6" class="py-0">
@@ -83,6 +114,14 @@
             :class="{ 'field-modified': isModified('name2Th') }"
           />
         </validation-provider>
+        <div v-if="hasPending('name2Th')" class="pending-field-box">
+          <v-icon small color="#14532d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
+          <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
+          <span class="pending-field-value">{{ getPendingDisplay('name2Th') }}</span>
+          <span class="pending-field-tag ml-auto">รอตรวจสอบ</span>
+        </div>
       </v-col>
 
       <v-col cols="12" md="6" class="py-0">
@@ -101,6 +140,14 @@
             :class="{ 'field-modified': isModified('name3Th') }"
           />
         </validation-provider>
+        <div v-if="hasPending('name3Th')" class="pending-field-box">
+          <v-icon small color="#14532d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
+          <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
+          <span class="pending-field-value">{{ getPendingDisplay('name3Th') }}</span>
+          <span class="pending-field-tag ml-auto">รอตรวจสอบ</span>
+        </div>
       </v-col>
 
       <v-col cols="12" md="6" class="py-0">
@@ -119,6 +166,14 @@
             :class="{ 'field-modified': isModified('name2OldTh') }"
           />
         </validation-provider>
+        <div v-if="hasPending('name2OldTh')" class="pending-field-box">
+          <v-icon small color="#14532d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
+          <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
+          <span class="pending-field-value">{{ getPendingDisplay('name2OldTh') }}</span>
+          <span class="pending-field-tag ml-auto">รอตรวจสอบ</span>
+        </div>
       </v-col>
 
       <v-col cols="12" md="6" class="py-0">
@@ -137,6 +192,14 @@
             :class="{ 'field-modified': isModified('name3OldTh') }"
           />
         </validation-provider>
+        <div v-if="hasPending('name3OldTh')" class="pending-field-box">
+          <v-icon small color="#14532d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
+          <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
+          <span class="pending-field-value">{{ getPendingDisplay('name3OldTh') }}</span>
+          <span class="pending-field-tag ml-auto">รอตรวจสอบ</span>
+        </div>
       </v-col>
     </v-row>
 
@@ -167,6 +230,14 @@
             :class="{ 'field-modified': isModified('name1En') }"
           />
         </validation-provider>
+        <div v-if="hasPending('name1En')" class="pending-field-box">
+          <v-icon small color="#14532d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
+          <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
+          <span class="pending-field-value">{{ getPendingDisplay('name1En') }}</span>
+          <span class="pending-field-tag ml-auto">รอตรวจสอบ</span>
+        </div>
       </v-col>
 
       <v-col cols="12" md="6" class="py-0">
@@ -185,6 +256,14 @@
             :class="{ 'field-modified': isModified('nameRankEn') }"
           />
         </validation-provider>
+        <div v-if="hasPending('nameRankEn')" class="pending-field-box">
+          <v-icon small color="#14532d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
+          <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
+          <span class="pending-field-value">{{ getPendingDisplay('nameRankEn') }}</span>
+          <span class="pending-field-tag ml-auto">รอตรวจสอบ</span>
+        </div>
       </v-col>
 
       <v-col cols="12" md="6" class="py-0">
@@ -203,6 +282,14 @@
             :class="{ 'field-modified': isModified('name2En') }"
           />
         </validation-provider>
+        <div v-if="hasPending('name2En')" class="pending-field-box">
+          <v-icon small color="#14532d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
+          <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
+          <span class="pending-field-value">{{ getPendingDisplay('name2En') }}</span>
+          <span class="pending-field-tag ml-auto">รอตรวจสอบ</span>
+        </div>
       </v-col>
 
       <v-col cols="12" md="6" class="py-0">
@@ -221,6 +308,14 @@
             :class="{ 'field-modified': isModified('name3En') }"
           />
         </validation-provider>
+        <div v-if="hasPending('name3En')" class="pending-field-box">
+          <v-icon small color="#14532d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
+          <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
+          <span class="pending-field-value">{{ getPendingDisplay('name3En') }}</span>
+          <span class="pending-field-tag ml-auto">รอตรวจสอบ</span>
+        </div>
       </v-col>
 
       <v-col cols="12" md="6" class="py-0">
@@ -239,6 +334,14 @@
             :class="{ 'field-modified': isModified('name2OldEn') }"
           />
         </validation-provider>
+        <div v-if="hasPending('name2OldEn')" class="pending-field-box">
+          <v-icon small color="#14532d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
+          <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
+          <span class="pending-field-value">{{ getPendingDisplay('name2OldEn') }}</span>
+          <span class="pending-field-tag ml-auto">รอตรวจสอบ</span>
+        </div>
       </v-col>
 
       <v-col cols="12" md="6" class="py-0">
@@ -257,6 +360,14 @@
             :class="{ 'field-modified': isModified('name3OldEn') }"
           />
         </validation-provider>
+        <div v-if="hasPending('name3OldEn')" class="pending-field-box">
+          <v-icon small color="#14532d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
+          <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
+          <span class="pending-field-value">{{ getPendingDisplay('name3OldEn') }}</span>
+          <span class="pending-field-tag ml-auto">รอตรวจสอบ</span>
+        </div>
       </v-col>
     </v-row>
 
@@ -274,6 +385,7 @@
       <v-col cols="12" md="3" class="py-0">
         <div class="d-flex align-center mb-1">
           <span>เลขบัตรประชาชน</span>
+          <!-- <span class="text--secondary text-caption ml-1">(ไม่สามารถแก้ไขได้)</span> -->
           <span class="text--secondary text-caption ml-1">(ไม่สามารถแก้ไขได้)</span>
         </div>
         <v-text-field
@@ -288,9 +400,8 @@
       </v-col>
 
       <v-col cols="12" md="3" class="py-0">
-        <div class="d-flex align-center mb-1 flex-wrap">
-          <span>เบอร์โทรศัพท์มือถือ<small class="ml-1" style="color: red">*</small></span>
-          <span class="text--secondary text-caption ml-1">(ใช้สำหรับเข้าสู่ระบบ)</span>
+        <div class="d-flex align-center mb-1">
+          <span>เบอร์โทรศัพท์มือถือ</span>
           <span v-if="isModified('mobile')" class="modified-badge">มีการแก้ไข</span>
         </div>
         <validation-provider v-slot="{ errors }" rules="required|numeric|digits:10|noSpace">
@@ -304,21 +415,14 @@
             :class="{ 'field-modified': isModified('mobile') }"
           />
         </validation-provider>
-        <transition name="fade">
-          <div
-            v-if="isModified('mobile')"
-            class="phone-change-warning mt-n2 mb-3 pa-2"
-          >
-            <div class="d-flex align-start">
-              <v-icon color="#e65100" class="mr-1 mt-0.5" style="font-size: 22px;">
-                mdi-alert
-              </v-icon>
-              <span class="phone-warning-text">
-                <strong>แจ้งเตือน:</strong> หากเปลี่ยนเบอร์โทรศัพท์ ในการเข้าสู่ระบบ (Login) ครั้งถัดไป จะต้องใช้เบอร์ใหม่นี้ในการเข้าสู่ระบบ
-              </span>
-            </div>
-          </div>
-        </transition>
+        <div v-if="hasPending('mobile')" class="pending-field-box">
+          <v-icon small color="#14532d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
+          <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
+          <span class="pending-field-value">{{ getPendingDisplay('mobile') }}</span>
+          <span class="pending-field-tag ml-auto">รอตรวจสอบ</span>
+        </div>
       </v-col>
 
       <v-col cols="12" md="3" class="py-0">
@@ -336,6 +440,14 @@
             :class="{ 'field-modified': isModified('email') }"
           />
         </validation-provider>
+        <div v-if="hasPending('email')" class="pending-field-box">
+          <v-icon small color="#14532d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
+          <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
+          <span class="pending-field-value">{{ getPendingDisplay('email') }}</span>
+          <span class="pending-field-tag ml-auto">รอตรวจสอบ</span>
+        </div>
       </v-col>
 
       <v-col cols="12" md="3" class="py-0">
@@ -353,6 +465,14 @@
             :class="{ 'field-modified': isModified('idLine') }"
           />
         </validation-provider>
+        <div v-if="hasPending('idLine')" class="pending-field-box">
+          <v-icon small color="#14532d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
+          <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
+          <span class="pending-field-value">{{ getPendingDisplay('idLine') }}</span>
+          <span class="pending-field-tag ml-auto">รอตรวจสอบ</span>
+        </div>
       </v-col>
 
       <v-col cols="12" md="3" class="py-0">
@@ -370,6 +490,14 @@
             :class="{ 'field-modified': isModified('nationality') }"
           />
         </validation-provider>
+        <div v-if="hasPending('nationality')" class="pending-field-box">
+          <v-icon small color="#14532d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
+          <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
+          <span class="pending-field-value">{{ getPendingDisplay('nationality') }}</span>
+          <span class="pending-field-tag ml-auto">รอตรวจสอบ</span>
+        </div>
       </v-col>
 
       <v-col cols="12" md="3" class="py-0">
@@ -387,6 +515,14 @@
             :class="{ 'field-modified': isModified('ethnicity') }"
           />
         </validation-provider>
+        <div v-if="hasPending('ethnicity')" class="pending-field-box">
+          <v-icon small color="#14532d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
+          <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
+          <span class="pending-field-value">{{ getPendingDisplay('ethnicity') }}</span>
+          <span class="pending-field-tag ml-auto">รอตรวจสอบ</span>
+        </div>
       </v-col>
 
       <v-col cols="12" md="3" class="py-0">
@@ -404,6 +540,14 @@
             :class="{ 'field-modified': isModified('religion') }"
           />
         </validation-provider>
+        <div v-if="hasPending('religion')" class="pending-field-box">
+          <v-icon small color="#14532d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
+          <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
+          <span class="pending-field-value">{{ getPendingDisplay('religion') }}</span>
+          <span class="pending-field-tag ml-auto">รอตรวจสอบ</span>
+        </div>
       </v-col>
 
       <v-col cols="12" md="3" class="py-0">
@@ -422,6 +566,14 @@
             :class="{ 'field-modified': isModified('gender') }"
           />
         </validation-provider>
+        <div v-if="hasPending('gender')" class="pending-field-box">
+          <v-icon small color="#14532d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
+          <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
+          <span class="pending-field-value">{{ getPendingDisplay('gender') }}</span>
+          <span class="pending-field-tag ml-auto">รอตรวจสอบ</span>
+        </div>
       </v-col>
 
       <v-col cols="12" md="3" class="py-0">
@@ -458,6 +610,14 @@
             @input="birthMenu = false"
           />
         </v-menu>
+        <div v-if="hasPending('birthDate')" class="pending-field-box">
+          <v-icon small color="#14532d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
+          <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
+          <span class="pending-field-value">{{ getPendingDisplay('birthDate') }}</span>
+          <span class="pending-field-tag ml-auto">รอตรวจสอบ</span>
+        </div>
       </v-col>
     </v-row>
   </div>
@@ -507,6 +667,14 @@ export default {
     initialForm: {
       type: Object,
       default: () => ({})
+    },
+    pendingFields: {
+      type: Object,
+      default: () => ({})
+    },
+    pendingImageUrl: {
+      type: String,
+      default: null
     }
   },
 
@@ -632,6 +800,29 @@ export default {
       const current = String(this.localForm[key] || '').trim()
       const original = String(this.initialForm[key] || '').trim()
       return current !== original
+    },
+
+    hasPending (key) {
+      if (!this.pendingFields || this.pendingFields[key] === undefined || this.pendingFields[key] === null) {
+        return false
+      }
+      if (typeof this.pendingFields[key] === 'string' && this.pendingFields[key].trim() === '') {
+        return false
+      }
+      return true
+    },
+
+    getPendingDisplay (key) {
+      if (!this.hasPending(key)) { return '' }
+      const val = this.pendingFields[key]
+      if (key === 'birthDate') {
+        const parts = String(val).split('-')
+        if (parts.length >= 3) {
+          const bYear = parseInt(parts[0], 10) + 543
+          return `${parts[2].padStart(2, '0')}-${parts[1].padStart(2, '0')}-${bYear}`
+        }
+      }
+      return String(val)
     }
   }
 }
@@ -670,16 +861,56 @@ export default {
   border: 2px dashed #2e7d32;
 }
 
-.phone-change-warning {
-  background-color: #fff8e1;
-  border: 1px solid #ffe082;
-  border-left: 3px solid #ff8f00;
-  border-radius: 4px;
-  line-height: 1.4;
+.pending-field-box {
+  background-color: #ecfdf5;
+  border: 1.5px solid #86efac;
+  border-left: 4px solid #16a34a;
+  border-radius: 6px;
+  padding: 6px 12px;
+  margin-top: -12px;
+  margin-bottom: 14px;
+  font-size: 16px !important;
+  color: #14532d;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  line-height: 1.5;
 }
 
-.phone-warning-text {
-  font-size: 20px;
-  color: #b75300;
+.pending-field-label {
+  color: #14532d;
+  font-weight: 600;
+  margin-right: 6px;
+  font-size: 16px !important;
+}
+
+.pending-field-value {
+  color: #dc2626;
+  font-weight: 800;
+  word-break: break-word;
+  font-size: 16px !important;
+}
+
+.pending-field-tag {
+  background-color: #dcfce7;
+  color: #14532d;
+  font-size: 16px !important;
+  padding: 1px 10px;
+  border-radius: 4px;
+  font-weight: 700;
+  white-space: nowrap;
+  border: 1px solid #86efac;
+}
+
+.pending-image-box {
+  background-color: #ecfdf5;
+  border: 1.5px solid #86efac;
+  border-left: 4px solid #16a34a;
+  border-radius: 8px;
+  padding: 10px 14px;
+  display: inline-block;
+  text-align: left;
+  font-size: 16px !important;
+  color: #14532d;
 }
 </style>
