@@ -55,7 +55,7 @@
             {{ pendingMessage || 'มีคำขอแก้ไขรอตรวจสอบอยู่' }}
           </div>
           <div class="text-caption mt-1" style="font-size: 14px;">
-            ท่านได้ส่งคำขอแก้ไขข้อมูลไว้แล้วและอยู่ระหว่างรอเจ้าหน้าที่ตรวจสอบ (รายการที่มีการยื่นแก้ไขจะแสดงแถบสีเขียวระบุข้อมูลที่ขอแก้ไขไว้ใต้ช่องข้อมูลเดิม)
+            ท่านได้ส่งคำขอแก้ไขข้อมูลไว้แล้วและอยู่ระหว่างรอเจ้าหน้าที่ตรวจสอบ ระบบจึงล็อกข้อมูลส่วนอื่นไว้ ไม่สามารถแก้ไขได้จนกว่าคำขอจะได้รับการอนุมัติหรือปฏิเสธ ยกเว้นเบอร์โทรศัพท์มือถือที่สามารถแก้ไขและบันทึกได้ทันที
           </div>
         </v-alert>
 
@@ -81,6 +81,7 @@
                   :initial-form="initialForm"
                   :pending-fields="pendingEditedFields"
                   :pending-image-url="pendingProfileData ? pendingProfileData.profileImageUrl : null"
+                  :disabled="hasPendingApproval"
                 />
 
                 <v-divider class="my-6" />
@@ -94,6 +95,7 @@
                   :geo-districts="geoDistricts"
                   :geo-subdistricts="geoSubdistricts"
                   :is-loading-geo="isLoadingGeo"
+                  :disabled="hasPendingApproval"
                 />
 
                 <v-divider class="my-6" />
@@ -118,12 +120,13 @@
                     large
                     min-width="140"
                     :loading="isSaving"
+                    :disabled="isSaveDisabled"
                     @click="submitForm"
                   >
                     <v-icon left>
                       mdi-content-save
                     </v-icon>
-                    บันทึกข้อมูล
+                    {{ hasPendingApproval ? 'บันทึกเบอร์โทรศัพท์' : 'บันทึกข้อมูล' }}
                   </v-btn>
                 </div>
               </template>
@@ -456,6 +459,19 @@ export default {
     changedFieldsCount () {
       return this.computeChangedFields().length
     },
+    isMobileChanged () {
+      const current = String(this.form.mobile || '').replace(/\D/g, '')
+      const initial = String(this.initialForm.mobile || '').replace(/\D/g, '')
+      return Boolean(current) && current !== initial
+    },
+    isSaveDisabled () {
+      if (this.hasPendingApproval) {
+        const current = String(this.form.mobile || '').replace(/\D/g, '')
+        const initial = String(this.initialForm.mobile || '').replace(/\D/g, '')
+        return !current || current === initial || current.length !== 10
+      }
+      return this.changedFieldsCount === 0
+    },
     hasMobileChanged () {
       return this.pendingChangedFields.some(item => item.key === 'mobile')
     },
@@ -568,10 +584,13 @@ export default {
       // 1. โหลดข้อมูลภูมิศาสตร์ให้พร้อม 100% ก่อนเสมอ
       await this.loadGeoData()
 
-      // 2. ดึงข้อมูลส่วนตัวและที่อยู่ของผู้ใช้จากทุกแหล่ง
+      // 2. ตรวจสอบสถานะคำขอที่รอตรวจสอบจาก /applicant/getProfileChanges เพื่อปิดปุ่มทันทีตั้งแต่เข้าหน้า
+      await this.fetchPendingProfile()
+
+      // 3. ดึงข้อมูลส่วนตัวและที่อยู่ของผู้ใช้จากทุกแหล่ง
       await this.initFormData()
 
-      // 3. บันทึก snapshot ข้อมูลเริ่มต้นสำหรับตรวจจับฟิลด์ที่แก้ไข
+      // 4. บันทึก snapshot ข้อมูลเริ่มต้นสำหรับตรวจจับฟิลด์ที่แก้ไข
       this.initialForm = JSON.parse(JSON.stringify(this.form))
     } finally {
       this.isLoading = false
@@ -799,7 +818,7 @@ export default {
 
     normalizeBirthDate (value) {
       if (!value) { return '' }
-      const str = String(value).trim()
+      const str = String(value).split('T')[0].trim()
       if (/^\d{4}-\d{2}-\d{2}$/.test(str)) {
         return str
       }
@@ -1036,6 +1055,39 @@ export default {
     },
 
     async submitForm () {
+      if (this.hasPendingApproval) {
+        const current = String(this.form.mobile || '').replace(/\D/g, '')
+        const initial = String(this.initialForm.mobile || '').replace(/\D/g, '')
+        if (!current || current === initial) {
+          await this.$swal({
+            icon: 'info',
+            title: 'ไม่มีข้อมูลที่เปลี่ยนแปลง',
+            text: 'เบอร์โทรศัพท์มือถือยังเป็นเบอร์เดิม กรุณาระบุเบอร์ใหม่หากต้องการแก้ไข',
+            confirmButtonText: 'ตกลง',
+            confirmButtonColor: '#327531'
+          })
+          return
+        }
+        if (!/^0[0-9]{9}$/.test(current)) {
+          await this.$swal({
+            icon: 'warning',
+            title: 'เบอร์โทรศัพท์ไม่ถูกต้อง',
+            text: 'กรุณากรอกเบอร์โทรศัพท์มือถือ 10 หลักให้ถูกต้อง (ตัวเลขเท่านั้น)',
+            confirmButtonText: 'ตกลง',
+            confirmButtonColor: '#327531'
+          })
+          return
+        }
+        this.pendingChangedFields = [{
+          key: 'mobile',
+          label: 'เบอร์โทรศัพท์มือถือ',
+          oldValue: this.initialForm.mobile || '-',
+          newValue: current
+        }]
+        this.isConfirmDialogOpen = true
+        return
+      }
+
       const isValid = await this.$refs.observer.validate()
       if (!isValid) {
         await this.$swal({
@@ -1046,6 +1098,33 @@ export default {
           confirmButtonColor: '#327531'
         })
         return
+      }
+
+      // หากเลือกใช้ที่อยู่ตามทะเบียนบ้าน ให้ซิงค์ข้อมูลลง form ก่อนตรวจจับการเปลี่ยนแปลง
+      if (this.form.checkboxAddressContact) {
+        this.form.addressContact = this.form.address
+        this.form.mooContact = this.form.moo
+        this.form.buildingContact = this.form.building
+        this.form.soiContact = this.form.soi
+        this.form.roadContact = this.form.road
+        this.form.provinceContact = this.form.province
+        this.form.districtContact = this.form.district
+        this.form.subdistrictContact = this.form.subdistrict
+        this.form.zipcodeContact = this.form.zipcode
+        this.form.phoneContact = this.form.phone
+      }
+
+      if (this.form.checkboxAddressDocument) {
+        this.form.addressDocument = this.form.address
+        this.form.mooDocument = this.form.moo
+        this.form.buildingDocument = this.form.building
+        this.form.soiDocument = this.form.soi
+        this.form.roadDocument = this.form.road
+        this.form.provinceDocument = this.form.province
+        this.form.districtDocument = this.form.district
+        this.form.subdistrictDocument = this.form.subdistrict
+        this.form.zipcodeDocument = this.form.zipcode
+        this.form.phoneDocument = this.form.phone
       }
 
       // ตรวจสอบว่ามีการแก้ไขข้อมูลใดๆ หรือไม่
@@ -1074,6 +1153,57 @@ export default {
     async onSave () {
       this.isSaving = true
       try {
+        const token = localStorage.getItem('accessTokenUser')
+        if (token) {
+          this.$axios.setToken(token, 'Bearer')
+        }
+
+        // กรณีมีคำขอแก้ไขรอตรวจสอบอยู่ ให้ส่งเฉพาะ mobile เท่านั้น
+        if (this.hasPendingApproval) {
+          const mobileClean = String(this.form.mobile || '').replace(/\D/g, '')
+          const mobilePayload = {
+            mobile: mobileClean
+          }
+          const updateRes = await this.$axios.$post('/applicant/updateProfile', mobilePayload)
+
+          const currentUser = this.$store.state.user || {}
+          this.$store.commit('setUser', {
+            ...currentUser,
+            mobile: mobileClean
+          })
+
+          if (this.form.idCard) {
+            const cacheKey = 'userProfileData_' + this.form.idCard
+            try {
+              const cached = JSON.parse(localStorage.getItem(cacheKey) || '{}')
+              cached.mobile = mobileClean
+              localStorage.setItem(cacheKey, JSON.stringify(cached))
+            } catch (e) {}
+          }
+
+          try {
+            await this.$axios.$post('/users/update', {
+              username: this.form.idCard,
+              mobile: mobileClean
+            })
+          } catch (apiErr) {}
+
+          this.initialForm.mobile = mobileClean
+          this.form.mobile = mobileClean
+          const successMsg = updateRes?.message || 'บันทึกเบอร์โทรศัพท์สำเร็จ'
+
+          await this.$swal({
+            icon: 'success',
+            title: 'บันทึกสำเร็จ',
+            html: `${successMsg}<br><div style="margin-top: 10px; padding: 10px; background-color: #fff8e1; border-radius: 6px; font-size: 14px; color: #b75300; border-left: 4px solid #ff8f00; text-align: left;"><strong>หมายเหตุสำคัญ:</strong> ในการเข้าสู่ระบบ (Login) ครั้งถัดไป กรุณาใช้เบอร์โทรศัพท์ใหม่ <strong>${mobileClean}</strong> ในการเข้าสู่ระบบ</div>`,
+            confirmButtonText: 'ตกลง',
+            confirmButtonColor: '#4fb24d'
+          })
+
+          await this.$router.push('/')
+          return
+        }
+
         const prefix = this.form.name1Th ? `${this.form.name1Th} ` : ''
         const updatedFullname = `${prefix}${this.form.name2Th || ''} ${this.form.name3Th || ''}`.trim()
 
@@ -1121,9 +1251,15 @@ export default {
           payload.phoneDocument = this.form.phone
         }
 
-        // สำหรับฟิลด์ที่ไม่ได้ถูกแก้ไข ให้คงค่าเดิมจาก rawProfile ไว้
+        // สำหรับฟิลด์ที่ไม่ได้ถูกแก้ไข ให้คงค่าเดิมจาก rawProfile ไว้ (ยกเว้นที่อยู่ที่เลือกซิงค์ตามทะเบียนบ้าน)
         const changedKeys = this.pendingChangedFields.map(item => item.key)
         Object.keys(FIELD_LABELS).forEach((key) => {
+          if (this.form.checkboxAddressContact && (key.endsWith('Contact') || key === 'checkboxAddressContact')) {
+            return
+          }
+          if (this.form.checkboxAddressDocument && (key.endsWith('Document') || key === 'checkboxAddressDocument')) {
+            return
+          }
           if (!changedKeys.includes(key) && this.rawProfile && this.rawProfile[key] !== undefined) {
             payload[key] = this.rawProfile[key]
           }
@@ -1140,15 +1276,8 @@ export default {
         delete payload.profileImageUrl
         delete payload.profileImageFile
         delete payload.idCard
-        delete payload.checkboxAddressContact
-        delete payload.checkboxAddressDocument
 
         // 2. เรียกเส้น API ใหม่ POST /applicant/updateProfile
-        const token = localStorage.getItem('accessTokenUser')
-        if (token) {
-          this.$axios.setToken(token, 'Bearer')
-        }
-
         let updateRes
         if (this.form.profileImageFile) {
           const formData = new FormData()
@@ -1204,10 +1333,16 @@ export default {
 
         await this.$router.push('/')
       } catch (err) {
+        const errorMsg = err.response?.data?.message || err.message || 'ไม่สามารถบันทึกข้อมูลส่วนตัวได้'
+        if (err.response?.status === 409 || errorMsg.includes('มีคำขอแก้ไขรอตรวจสอบอยู่')) {
+          this.hasPendingApproval = true
+          this.pendingMessage = errorMsg
+          this.fetchPendingProfile()
+        }
         await this.$swal({
           icon: 'error',
           title: 'เกิดข้อผิดพลาด',
-          text: err.response?.data?.message || err.message || 'ไม่สามารถบันทึกข้อมูลส่วนตัวได้',
+          text: errorMsg,
           confirmButtonText: 'ตกลง',
           confirmButtonColor: '#327531'
         })

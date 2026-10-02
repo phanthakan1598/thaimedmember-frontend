@@ -14,14 +14,15 @@
         <div :class="{ 'image-upload-modified': isModified('profileImageUrl') || isModified('profileImageFile') }">
           <ProfileImageUpload
             v-model="localForm.profileImageUrl"
+            :disabled="disabled"
             @change="handleImageChange"
           />
         </div>
         <div v-if="pendingImageUrl" class="pending-image-box mt-3">
           <div class="d-flex align-center">
             <v-icon small color="#14532d" class="mr-1">
-            mdi-clock-outline
-          </v-icon>
+              mdi-clock-outline
+            </v-icon>
             <span class="pending-field-label">รูปที่ขอเปลี่ยน:</span>
             <span class="pending-field-tag ml-2">รอตรวจสอบ</span>
           </div>
@@ -58,6 +59,7 @@
             placeholder="กรุณาระบุคำนำหน้า"
             outlined
             dense
+            :disabled="disabled"
             :error-messages="errors"
             :class="{ 'field-modified': isModified('name1Th') }"
           />
@@ -84,6 +86,7 @@
             placeholder="กรุณาระบุยศ"
             outlined
             dense
+            :disabled="disabled"
             :error-messages="errors"
             :class="{ 'field-modified': isModified('nameRankTh') }"
           />
@@ -110,6 +113,7 @@
             placeholder="กรุณาระบุชื่อ"
             outlined
             dense
+            :disabled="disabled"
             :error-messages="errors"
             :class="{ 'field-modified': isModified('name2Th') }"
           />
@@ -136,6 +140,7 @@
             placeholder="กรุณาระบุนามสกุล"
             outlined
             dense
+            :disabled="disabled"
             :error-messages="errors"
             :class="{ 'field-modified': isModified('name3Th') }"
           />
@@ -162,6 +167,7 @@
             placeholder="กรุณาระบุชื่อเดิม"
             outlined
             dense
+            :disabled="disabled"
             :error-messages="errors"
             :class="{ 'field-modified': isModified('name2OldTh') }"
           />
@@ -188,6 +194,7 @@
             placeholder="กรุณาระบุนามสกุลเดิม"
             outlined
             dense
+            :disabled="disabled"
             :error-messages="errors"
             :class="{ 'field-modified': isModified('name3OldTh') }"
           />
@@ -226,6 +233,7 @@
             placeholder="กรุณาระบุคำนำหน้า"
             outlined
             dense
+            :disabled="disabled"
             :error-messages="errors"
             :class="{ 'field-modified': isModified('name1En') }"
           />
@@ -252,6 +260,7 @@
             placeholder="กรุณาระบุยศ"
             outlined
             dense
+            :disabled="disabled"
             :error-messages="errors"
             :class="{ 'field-modified': isModified('nameRankEn') }"
           />
@@ -278,6 +287,7 @@
             placeholder="กรุณาระบุชื่อ"
             outlined
             dense
+            :disabled="disabled"
             :error-messages="errors"
             :class="{ 'field-modified': isModified('name2En') }"
           />
@@ -304,6 +314,7 @@
             placeholder="กรุณาระบุนามสกุล"
             outlined
             dense
+            :disabled="disabled"
             :error-messages="errors"
             :class="{ 'field-modified': isModified('name3En') }"
           />
@@ -330,6 +341,7 @@
             placeholder="กรุณาระบุชื่อเดิม"
             outlined
             dense
+            :disabled="disabled"
             :error-messages="errors"
             :class="{ 'field-modified': isModified('name2OldEn') }"
           />
@@ -356,6 +368,7 @@
             placeholder="กรุณาระบุนามสกุลเดิม"
             outlined
             dense
+            :disabled="disabled"
             :error-messages="errors"
             :class="{ 'field-modified': isModified('name3OldEn') }"
           />
@@ -401,7 +414,7 @@
 
       <v-col cols="12" md="3" class="py-0">
         <div class="d-flex align-center mb-1">
-          <span>เบอร์โทรศัพท์มือถือ</span>
+          <span>เบอร์โทรศัพท์มือถือ<small class="ml-1" style="color: red">*</small></span>
           <span v-if="isModified('mobile')" class="modified-badge">มีการแก้ไข</span>
         </div>
         <validation-provider v-slot="{ errors }" rules="required|numeric|digits:10|noSpace">
@@ -436,6 +449,7 @@
             placeholder="กรุณาระบุอีเมลหลัก"
             outlined
             dense
+            :disabled="disabled"
             :error-messages="errors"
             :class="{ 'field-modified': isModified('email') }"
           />
@@ -461,6 +475,7 @@
             placeholder="กรุณาระบุ Line ID"
             outlined
             dense
+            :disabled="disabled"
             :error-messages="errors"
             :class="{ 'field-modified': isModified('idLine') }"
           />
@@ -486,6 +501,7 @@
             placeholder="กรุณาระบุสัญชาติ"
             outlined
             dense
+            :disabled="disabled"
             :error-messages="errors"
             :class="{ 'field-modified': isModified('nationality') }"
           />
@@ -511,6 +527,7 @@
             placeholder="กรุณาระบุเชื้อชาติ"
             outlined
             dense
+            :disabled="disabled"
             :error-messages="errors"
             :class="{ 'field-modified': isModified('ethnicity') }"
           />
@@ -536,6 +553,7 @@
             placeholder="กรุณาระบุศาสนา"
             outlined
             dense
+            :disabled="disabled"
             :error-messages="errors"
             :class="{ 'field-modified': isModified('religion') }"
           />
@@ -562,6 +580,7 @@
             placeholder="กรุณาระบุเพศ"
             outlined
             dense
+            :disabled="disabled"
             :error-messages="errors"
             :class="{ 'field-modified': isModified('gender') }"
           />
@@ -587,6 +606,7 @@
           transition="scale-transition"
           offset-y
           min-width="auto"
+          :disabled="disabled"
         >
           <template #activator="{ on, attrs }">
             <validation-provider v-slot="{ errors }" rules="required">
@@ -598,6 +618,7 @@
                 outlined
                 dense
                 v-bind="attrs"
+                :disabled="disabled"
                 :error-messages="errors"
                 :class="{ 'field-modified': isModified('birthDate') }"
                 v-on="on"
@@ -663,6 +684,10 @@ export default {
     value: {
       type: Object,
       default: () => ({})
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     },
     initialForm: {
       type: Object,

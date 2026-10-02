@@ -19,6 +19,7 @@
             placeholder="กรุณาระบุบ้านเลขที่"
             outlined
             dense
+            :disabled="disabled"
             :error-messages="errors"
             :class="{ 'field-modified': isModified('address') }"
           />
@@ -43,6 +44,7 @@
           placeholder="กรุณาระบุหมู่ที่"
           outlined
           dense
+          :disabled="disabled"
           :class="{ 'field-modified': isModified('moo') }"
         />
         <div v-if="hasPending('moo')" class="pending-field-box">
@@ -65,6 +67,7 @@
           placeholder="กรุณาระบุหมู่บ้าน / อาคาร"
           outlined
           dense
+          :disabled="disabled"
           :class="{ 'field-modified': isModified('building') }"
         />
         <div v-if="hasPending('building')" class="pending-field-box">
@@ -87,6 +90,7 @@
           placeholder="กรุณาระบุซอย"
           outlined
           dense
+          :disabled="disabled"
           :class="{ 'field-modified': isModified('soi') }"
         />
         <div v-if="hasPending('soi')" class="pending-field-box">
@@ -109,6 +113,7 @@
           placeholder="กรุณาระบุถนน"
           outlined
           dense
+          :disabled="disabled"
           :class="{ 'field-modified': isModified('road') }"
         />
         <div v-if="hasPending('road')" class="pending-field-box">
@@ -134,6 +139,7 @@
             placeholder="กรุณาระบุจังหวัด"
             outlined
             dense
+            :disabled="disabled"
             :error-messages="errors"
             :class="{ 'field-modified': isModified('province') }"
             @change="onProvinceChange"
@@ -158,7 +164,7 @@
           <v-autocomplete
             v-model="localForm.district"
             :items="districtOptions"
-            :disabled="!localForm.province"
+            :disabled="disabled || !localForm.province"
             placeholder="กรุณาระบุเขต / อำเภอ"
             outlined
             dense
@@ -186,7 +192,7 @@
           <v-autocomplete
             v-model="localForm.subdistrict"
             :items="subdistrictOptions"
-            :disabled="!localForm.district"
+            :disabled="disabled || !localForm.district"
             placeholder="กรุณาระบุแขวง / ตำบล"
             outlined
             dense
@@ -214,7 +220,7 @@
           <v-autocomplete
             v-model="localForm.zipcode"
             :items="zipcodeOptions"
-            :disabled="!localForm.district"
+            :disabled="disabled || !localForm.district"
             placeholder="กรุณาระบุรหัสไปรษณีย์"
             outlined
             dense
@@ -243,6 +249,7 @@
             placeholder="กรุณาระบุเบอร์โทรศัพท์บ้าน"
             outlined
             dense
+            :disabled="disabled"
             :error-messages="errors"
             :class="{ 'field-modified': isModified('phone') }"
           />
@@ -271,6 +278,7 @@
           class="ma-0 pa-0 mr-2"
           hide-details
           label="ใช้ตามที่อยู่ทะเบียนบ้าน"
+          :disabled="disabled"
           @change="toggleAddressContact"
         />
         <span v-if="isModified('checkboxAddressContact')" class="modified-badge">มีการแก้ไข</span>
@@ -289,12 +297,12 @@
           <span>บ้านเลขที่<small class="ml-1" style="color: red">*</small></span>
           <span v-if="isModified('addressContact')" class="modified-badge">มีการแก้ไข</span>
         </div>
-        <validation-provider v-slot="{ errors }" rules="required">
+        <validation-provider v-slot="{ errors }" :rules="localForm.checkboxAddressContact ? '' : 'required'">
           <v-text-field
             v-model="localForm.addressContact"
             placeholder="กรุณาระบุบ้านเลขที่"
             outlined
-            :disabled="localForm.checkboxAddressContact"
+            :disabled="disabled || localForm.checkboxAddressContact"
             dense
             :error-messages="errors"
             :class="{ 'field-modified': isModified('addressContact') }"
@@ -319,7 +327,7 @@
           v-model="localForm.mooContact"
           placeholder="กรุณาระบุหมู่ที่"
           outlined
-          :disabled="localForm.checkboxAddressContact"
+          :disabled="disabled || localForm.checkboxAddressContact"
           dense
           :class="{ 'field-modified': isModified('mooContact') }"
         />
@@ -342,7 +350,7 @@
           v-model="localForm.buildingContact"
           placeholder="กรุณาระบุหมู่บ้าน / อาคาร"
           outlined
-          :disabled="localForm.checkboxAddressContact"
+          :disabled="disabled || localForm.checkboxAddressContact"
           dense
           :class="{ 'field-modified': isModified('buildingContact') }"
         />
@@ -365,7 +373,7 @@
           v-model="localForm.soiContact"
           placeholder="กรุณาระบุซอย"
           outlined
-          :disabled="localForm.checkboxAddressContact"
+          :disabled="disabled || localForm.checkboxAddressContact"
           dense
           :class="{ 'field-modified': isModified('soiContact') }"
         />
@@ -388,7 +396,7 @@
           v-model="localForm.roadContact"
           placeholder="กรุณาระบุถนน"
           outlined
-          :disabled="localForm.checkboxAddressContact"
+          :disabled="disabled || localForm.checkboxAddressContact"
           dense
           :class="{ 'field-modified': isModified('roadContact') }"
         />
@@ -407,14 +415,14 @@
           <span>จังหวัด<small class="ml-1" style="color: red">*</small></span>
           <span v-if="isModified('provinceContact')" class="modified-badge">มีการแก้ไข</span>
         </div>
-        <validation-provider v-slot="{ errors }" rules="required">
+        <validation-provider v-slot="{ errors }" :rules="localForm.checkboxAddressContact ? '' : 'required'">
           <v-autocomplete
             v-model="localForm.provinceContact"
             :items="provinceOptions"
             :loading="activeIsLoadingGeo"
             placeholder="กรุณาระบุจังหวัด"
             outlined
-            :disabled="localForm.checkboxAddressContact"
+            :disabled="disabled || localForm.checkboxAddressContact"
             dense
             :error-messages="errors"
             :class="{ 'field-modified': isModified('provinceContact') }"
@@ -436,13 +444,13 @@
           <span>เขต / อำเภอ<small class="ml-1" style="color: red">*</small></span>
           <span v-if="isModified('districtContact')" class="modified-badge">มีการแก้ไข</span>
         </div>
-        <validation-provider v-slot="{ errors }" rules="required">
+        <validation-provider v-slot="{ errors }" :rules="localForm.checkboxAddressContact ? '' : 'required'">
           <v-autocomplete
             v-model="localForm.districtContact"
             :items="districtContactOptions"
             placeholder="กรุณาระบุเขต / อำเภอ"
             outlined
-            :disabled="localForm.checkboxAddressContact || !localForm.provinceContact"
+            :disabled="disabled || localForm.checkboxAddressContact || !localForm.provinceContact"
             dense
             :error-messages="errors"
             :class="{ 'field-modified': isModified('districtContact') }"
@@ -464,17 +472,17 @@
           <span>แขวง / ตำบล<small class="ml-1" style="color: red">*</small></span>
           <span v-if="isModified('subdistrictContact')" class="modified-badge">มีการแก้ไข</span>
         </div>
-        <validation-provider v-slot="{ errors }" rules="required">
+        <validation-provider v-slot="{ errors }" :rules="localForm.checkboxAddressContact ? '' : 'required'">
           <v-autocomplete
             v-model="localForm.subdistrictContact"
             :items="subdistrictContactOptions"
             placeholder="กรุณาระบุแขวง / ตำบล"
             outlined
-            :disabled="localForm.checkboxAddressContact || !localForm.districtContact"
+            :disabled="disabled || localForm.checkboxAddressContact || !localForm.districtContact"
             dense
             :error-messages="errors"
             :class="{ 'field-modified': isModified('subdistrictContact') }"
-            @change="onSubdistrictContactChange"
+            @change="onSubdistrictChange"
           />
         </validation-provider>
         <div v-if="hasPending('subdistrictContact')" class="pending-field-box">
@@ -492,13 +500,13 @@
           <span>รหัสไปรษณีย์<small class="ml-1" style="color: red">*</small></span>
           <span v-if="isModified('zipcodeContact')" class="modified-badge">มีการแก้ไข</span>
         </div>
-        <validation-provider v-slot="{ errors }" rules="required">
+        <validation-provider v-slot="{ errors }" :rules="localForm.checkboxAddressContact ? '' : 'required'">
           <v-autocomplete
             v-model="localForm.zipcodeContact"
             :items="zipcodeContactOptions"
             placeholder="กรุณาระบุรหัสไปรษณีย์"
             outlined
-            :disabled="localForm.checkboxAddressContact || !localForm.districtContact"
+            :disabled="disabled || localForm.checkboxAddressContact || !localForm.districtContact"
             dense
             :error-messages="errors"
             :class="{ 'field-modified': isModified('zipcodeContact') }"
@@ -524,7 +532,7 @@
             v-model="localForm.phoneContact"
             placeholder="กรุณาระบุเบอร์โทรศัพท์บ้าน"
             outlined
-            :disabled="localForm.checkboxAddressContact"
+            :disabled="disabled || localForm.checkboxAddressContact"
             dense
             :error-messages="errors"
             :class="{ 'field-modified': isModified('phoneContact') }"
@@ -554,6 +562,7 @@
           class="ma-0 pa-0 mr-2"
           hide-details
           label="ใช้ตามที่อยู่ทะเบียนบ้าน"
+          :disabled="disabled"
           @change="toggleAddressDocument"
         />
         <span v-if="isModified('checkboxAddressDocument')" class="modified-badge">มีการแก้ไข</span>
@@ -572,12 +581,12 @@
           <span>บ้านเลขที่<small class="ml-1" style="color: red">*</small></span>
           <span v-if="isModified('addressDocument')" class="modified-badge">มีการแก้ไข</span>
         </div>
-        <validation-provider v-slot="{ errors }" rules="required">
+        <validation-provider v-slot="{ errors }" :rules="localForm.checkboxAddressDocument ? '' : 'required'">
           <v-text-field
             v-model="localForm.addressDocument"
             placeholder="กรุณาระบุบ้านเลขที่"
             outlined
-            :disabled="localForm.checkboxAddressDocument"
+            :disabled="disabled || localForm.checkboxAddressDocument"
             dense
             :error-messages="errors"
             :class="{ 'field-modified': isModified('addressDocument') }"
@@ -602,7 +611,7 @@
           v-model="localForm.mooDocument"
           placeholder="กรุณาระบุหมู่ที่"
           outlined
-          :disabled="localForm.checkboxAddressDocument"
+          :disabled="disabled || localForm.checkboxAddressDocument"
           dense
           :class="{ 'field-modified': isModified('mooDocument') }"
         />
@@ -625,7 +634,7 @@
           v-model="localForm.buildingDocument"
           placeholder="กรุณาระบุหมู่บ้าน / อาคาร"
           outlined
-          :disabled="localForm.checkboxAddressDocument"
+          :disabled="disabled || localForm.checkboxAddressDocument"
           dense
           :class="{ 'field-modified': isModified('buildingDocument') }"
         />
@@ -648,7 +657,7 @@
           v-model="localForm.soiDocument"
           placeholder="กรุณาระบุซอย"
           outlined
-          :disabled="localForm.checkboxAddressDocument"
+          :disabled="disabled || localForm.checkboxAddressDocument"
           dense
           :class="{ 'field-modified': isModified('soiDocument') }"
         />
@@ -671,7 +680,7 @@
           v-model="localForm.roadDocument"
           placeholder="กรุณาระบุถนน"
           outlined
-          :disabled="localForm.checkboxAddressDocument"
+          :disabled="disabled || localForm.checkboxAddressDocument"
           dense
           :class="{ 'field-modified': isModified('roadDocument') }"
         />
@@ -690,14 +699,14 @@
           <span>จังหวัด<small class="ml-1" style="color: red">*</small></span>
           <span v-if="isModified('provinceDocument')" class="modified-badge">มีการแก้ไข</span>
         </div>
-        <validation-provider v-slot="{ errors }" rules="required">
+        <validation-provider v-slot="{ errors }" :rules="localForm.checkboxAddressDocument ? '' : 'required'">
           <v-autocomplete
             v-model="localForm.provinceDocument"
             :items="provinceOptions"
             :loading="activeIsLoadingGeo"
             placeholder="กรุณาระบุจังหวัด"
             outlined
-            :disabled="localForm.checkboxAddressDocument"
+            :disabled="disabled || localForm.checkboxAddressDocument"
             dense
             :error-messages="errors"
             :class="{ 'field-modified': isModified('provinceDocument') }"
@@ -719,13 +728,13 @@
           <span>เขต / อำเภอ<small class="ml-1" style="color: red">*</small></span>
           <span v-if="isModified('districtDocument')" class="modified-badge">มีการแก้ไข</span>
         </div>
-        <validation-provider v-slot="{ errors }" rules="required">
+        <validation-provider v-slot="{ errors }" :rules="localForm.checkboxAddressDocument ? '' : 'required'">
           <v-autocomplete
             v-model="localForm.districtDocument"
             :items="districtDocumentOptions"
             placeholder="กรุณาระบุเขต / อำเภอ"
             outlined
-            :disabled="localForm.checkboxAddressDocument || !localForm.provinceDocument"
+            :disabled="disabled || localForm.checkboxAddressDocument || !localForm.provinceDocument"
             dense
             :error-messages="errors"
             :class="{ 'field-modified': isModified('districtDocument') }"
@@ -747,13 +756,13 @@
           <span>แขวง / ตำบล<small class="ml-1" style="color: red">*</small></span>
           <span v-if="isModified('subdistrictDocument')" class="modified-badge">มีการแก้ไข</span>
         </div>
-        <validation-provider v-slot="{ errors }" rules="required">
+        <validation-provider v-slot="{ errors }" :rules="localForm.checkboxAddressDocument ? '' : 'required'">
           <v-autocomplete
             v-model="localForm.subdistrictDocument"
             :items="subdistrictDocumentOptions"
             placeholder="กรุณาระบุแขวง / ตำบล"
             outlined
-            :disabled="localForm.checkboxAddressDocument || !localForm.districtDocument"
+            :disabled="disabled || localForm.checkboxAddressDocument || !localForm.districtDocument"
             dense
             :error-messages="errors"
             :class="{ 'field-modified': isModified('subdistrictDocument') }"
@@ -775,13 +784,13 @@
           <span>รหัสไปรษณีย์<small class="ml-1" style="color: red">*</small></span>
           <span v-if="isModified('zipcodeDocument')" class="modified-badge">มีการแก้ไข</span>
         </div>
-        <validation-provider v-slot="{ errors }" rules="required">
+        <validation-provider v-slot="{ errors }" :rules="localForm.checkboxAddressDocument ? '' : 'required'">
           <v-autocomplete
             v-model="localForm.zipcodeDocument"
             :items="zipcodeDocumentOptions"
             placeholder="กรุณาระบุรหัสไปรษณีย์"
             outlined
-            :disabled="localForm.checkboxAddressDocument || !localForm.districtDocument"
+            :disabled="disabled || localForm.checkboxAddressDocument || !localForm.districtDocument"
             dense
             :error-messages="errors"
             :class="{ 'field-modified': isModified('zipcodeDocument') }"
@@ -807,14 +816,16 @@
             v-model="localForm.phoneDocument"
             placeholder="กรุณาระบุเบอร์โทรศัพท์บ้าน"
             outlined
-            :disabled="localForm.checkboxAddressDocument"
+            :disabled="disabled || localForm.checkboxAddressDocument"
             dense
             :error-messages="errors"
             :class="{ 'field-modified': isModified('phoneDocument') }"
           />
         </validation-provider>
         <div v-if="hasPending('phoneDocument')" class="pending-field-box">
-          <v-icon small color="#15803d" class="mr-1">mdi-clock-outline</v-icon>
+          <v-icon small color="#15803d" class="mr-1">
+            mdi-clock-outline
+          </v-icon>
           <span class="pending-field-label">ข้อมูลที่ขอแก้ไข:</span>
           <span class="pending-field-value">{{ getPendingDisplay('phoneDocument') }}</span>
           <span class="pending-field-tag ml-auto">รอตรวจสอบ</span>
@@ -920,6 +931,10 @@ export default {
     value: {
       type: Object,
       default: () => ({})
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     },
     initialForm: {
       type: Object,
@@ -1109,6 +1124,46 @@ export default {
         this.$emit('input', updated)
       },
       deep: true
+    },
+    'localForm.address' () {
+      this.syncContactAddress()
+      this.syncDocumentAddress()
+    },
+    'localForm.moo' () {
+      this.syncContactAddress()
+      this.syncDocumentAddress()
+    },
+    'localForm.building' () {
+      this.syncContactAddress()
+      this.syncDocumentAddress()
+    },
+    'localForm.soi' () {
+      this.syncContactAddress()
+      this.syncDocumentAddress()
+    },
+    'localForm.road' () {
+      this.syncContactAddress()
+      this.syncDocumentAddress()
+    },
+    'localForm.province' () {
+      this.syncContactAddress()
+      this.syncDocumentAddress()
+    },
+    'localForm.district' () {
+      this.syncContactAddress()
+      this.syncDocumentAddress()
+    },
+    'localForm.subdistrict' () {
+      this.syncContactAddress()
+      this.syncDocumentAddress()
+    },
+    'localForm.zipcode' () {
+      this.syncContactAddress()
+      this.syncDocumentAddress()
+    },
+    'localForm.phone' () {
+      this.syncContactAddress()
+      this.syncDocumentAddress()
     }
   },
 
@@ -1116,9 +1171,45 @@ export default {
     if (!this.geoProvinces || this.geoProvinces.length === 0) {
       this.loadGeoData()
     }
+    if (this.localForm.checkboxAddressContact) {
+      this.syncContactAddress()
+    }
+    if (this.localForm.checkboxAddressDocument) {
+      this.syncDocumentAddress()
+    }
   },
 
   methods: {
+    syncContactAddress () {
+      if (this.localForm.checkboxAddressContact) {
+        this.localForm.addressContact = this.localForm.address
+        this.localForm.mooContact = this.localForm.moo
+        this.localForm.buildingContact = this.localForm.building
+        this.localForm.soiContact = this.localForm.soi
+        this.localForm.roadContact = this.localForm.road
+        this.localForm.provinceContact = this.localForm.province
+        this.localForm.districtContact = this.localForm.district
+        this.localForm.subdistrictContact = this.localForm.subdistrict
+        this.localForm.zipcodeContact = this.localForm.zipcode
+        this.localForm.phoneContact = this.localForm.phone
+      }
+    },
+
+    syncDocumentAddress () {
+      if (this.localForm.checkboxAddressDocument) {
+        this.localForm.addressDocument = this.localForm.address
+        this.localForm.mooDocument = this.localForm.moo
+        this.localForm.buildingDocument = this.localForm.building
+        this.localForm.soiDocument = this.localForm.soi
+        this.localForm.roadDocument = this.localForm.road
+        this.localForm.provinceDocument = this.localForm.province
+        this.localForm.districtDocument = this.localForm.district
+        this.localForm.subdistrictDocument = this.localForm.subdistrict
+        this.localForm.zipcodeDocument = this.localForm.zipcode
+        this.localForm.phoneDocument = this.localForm.phone
+      }
+    },
+
     isModified (key) {
       if (!this.initialForm || Object.keys(this.initialForm).length === 0) {
         return false
@@ -1133,31 +1224,13 @@ export default {
 
     toggleAddressContact (checked) {
       if (checked) {
-        this.localForm.addressContact = this.localForm.address
-        this.localForm.mooContact = this.localForm.moo
-        this.localForm.buildingContact = this.localForm.building
-        this.localForm.soiContact = this.localForm.soi
-        this.localForm.roadContact = this.localForm.road
-        this.localForm.provinceContact = this.localForm.province
-        this.localForm.districtContact = this.localForm.district
-        this.localForm.subdistrictContact = this.localForm.subdistrict
-        this.localForm.zipcodeContact = this.localForm.zipcode
-        this.localForm.phoneContact = this.localForm.phone
+        this.syncContactAddress()
       }
     },
 
     toggleAddressDocument (checked) {
       if (checked) {
-        this.localForm.addressDocument = this.localForm.address
-        this.localForm.mooDocument = this.localForm.moo
-        this.localForm.buildingDocument = this.localForm.building
-        this.localForm.soiDocument = this.localForm.soi
-        this.localForm.roadDocument = this.localForm.road
-        this.localForm.provinceDocument = this.localForm.province
-        this.localForm.districtDocument = this.localForm.district
-        this.localForm.subdistrictDocument = this.localForm.subdistrict
-        this.localForm.zipcodeDocument = this.localForm.zipcode
-        this.localForm.phoneDocument = this.localForm.phone
+        this.syncDocumentAddress()
       }
     },
 

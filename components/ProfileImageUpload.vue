@@ -3,12 +3,12 @@
     <v-card
       class="upload-box d-flex flex-column align-center justify-center"
       flat
-      :class="{ 'has-image': previewUrl, 'has-error': hasError }"
+      :class="{ 'has-image': previewUrl, 'has-error': hasError, 'upload-disabled': disabled }"
       :ripple="false"
-      @click="!previewUrl && triggerFileInput()"
-      @dragover.prevent="onDragOver"
-      @dragleave.prevent="onDragLeave"
-      @drop.prevent="onDrop"
+      @click="!disabled && !previewUrl && triggerFileInput()"
+      @dragover.prevent="!disabled && onDragOver($event)"
+      @dragleave.prevent="!disabled && onDragLeave($event)"
+      @drop.prevent="!disabled && onDrop($event)"
     >
       <input
         ref="fileInput"
@@ -19,18 +19,21 @@
       >
 
       <template v-if="!previewUrl">
-        <v-icon size="56" :color="hasError ? 'error' : 'green lighten-1'">
+        <v-icon size="56" :color="hasError ? 'error' : (disabled ? 'grey' : 'green lighten-1')">
           mdi-image-outline
         </v-icon>
         <div class="upload-text mt-3">
-          อัพโหลดรูปถ่ายที่นี่
+          {{ disabled ? 'ไม่สามารถเปลี่ยนรูปได้' : 'อัพโหลดรูปถ่ายที่นี่' }}
         </div>
-        <div class="upload-subtext">
+        <div v-if="!disabled" class="upload-subtext">
           หรือ
           <span class="choose-file-link" @click.stop="triggerFileInput">เลือกไฟล์</span>
         </div>
-        <div class="upload-subtext">
+        <div v-if="!disabled" class="upload-subtext">
           จากคอมพิวเตอร์ของคุณ
+        </div>
+        <div v-else class="upload-subtext text-caption">
+          (มีคำขอแก้ไขรอตรวจสอบอยู่)
         </div>
       </template>
 
@@ -41,6 +44,7 @@
             class="preview-image"
           />
           <v-btn
+            v-if="!disabled"
             icon
             small
             class="remove-btn"
@@ -81,6 +85,10 @@ export default {
     value: {
       type: [String, Object],
       default: null
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     },
     maxSizeMb: {
       type: Number,
@@ -135,24 +143,29 @@ export default {
 
   methods: {
     triggerFileInput () {
+      if (this.disabled) { return }
       this.$refs.fileInput.click()
     },
 
     onFileChange (e) {
+      if (this.disabled) { return }
       const file = e.target.files[0]
       if (file) { this.handleFile(file) }
       e.target.value = ''
     },
 
     onDragOver () {
+      if (this.disabled) { return }
       this.isDragging = true
     },
 
     onDragLeave () {
+      if (this.disabled) { return }
       this.isDragging = false
     },
 
     onDrop (e) {
+      if (this.disabled) { return }
       this.isDragging = false
       const file = e.dataTransfer.files[0]
       if (file) { this.handleFile(file) }
@@ -217,6 +230,14 @@ export default {
 .upload-box.has-image {
   cursor: default;
   border-style: solid;
+}
+
+.upload-box.upload-disabled {
+  opacity: 0.65;
+  cursor: not-allowed !important;
+  background-color: #f5f5f5 !important;
+  border-color: #bdbdbd !important;
+  border-style: dashed;
 }
 
 .hidden-input {
